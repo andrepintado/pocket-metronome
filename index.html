@@ -641,25 +641,32 @@
         /* Save Confirmation Modal */
         .save-confirm-modal {
             position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0.9);
-            background: var(--container-bg);
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 20px 60px var(--shadow-color);
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 60px;
             z-index: 1002;
             opacity: 0;
             visibility: hidden;
             transition: all 0.3s ease;
-            max-width: 400px;
-            width: 90%;
         }
 
         .save-confirm-modal.open {
             opacity: 1;
             visibility: visible;
-            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .save-confirm-modal-content {
+            background: var(--container-bg);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 60px var(--shadow-color);
+            max-width: 400px;
+            width: 100%;
         }
 
         .save-confirm-modal h3 {
@@ -1238,11 +1245,13 @@
 
     <!-- Save Confirmation Modal -->
     <div class="save-confirm-modal" id="saveConfirmModal">
-        <h3>Save current metronome?</h3>
-        <p>You have unsaved changes. Would you like to save them before creating a new metronome?</p>
-        <div class="save-confirm-modal-buttons">
-            <button class="save-confirm-cancel" id="saveConfirmNo">No</button>
-            <button class="save-confirm-yes" id="saveConfirmYes">Yes</button>
+        <div class="save-confirm-modal-content">
+            <h3>Save current metronome?</h3>
+            <p>You have unsaved changes. Would you like to save them before creating a new metronome?</p>
+            <div class="save-confirm-modal-buttons">
+                <button class="save-confirm-cancel" id="saveConfirmNo">No</button>
+                <button class="save-confirm-yes" id="saveConfirmYes">Yes</button>
+            </div>
         </div>
     </div>
 
@@ -1346,7 +1355,7 @@
             ℹ️
         </button>
         <h1>🎵 Pocket Metronome</h1>
-        <div class="preset-name" id="presetName" title="Click to rename">Unsaved</div>
+        <div class="preset-name" id="presetName" title="Click to save">Unsaved</div>
 
         <div class="control-group">
             <label>Tempo (BPM)</label>
@@ -2443,16 +2452,21 @@
                     }
                 });
 
+                // Close save confirm modal when clicking on modal background
+                this.saveConfirmModal.addEventListener('click', (e) => {
+                    if (e.target === this.saveConfirmModal) {
+                        this.confirmSaveConfirmNo();
+                    }
+                });
+
                 // Presets
                 this.savePresetBtn.addEventListener('click', () => this.savePreset());
                 this.presetsListBtn.addEventListener('click', () => this.openPresetsModal());
                 this.presetsClose.addEventListener('click', () => this.closePresetsModal());
 
-                // Click on preset name to rename
+                // Click on metronome name to save
                 this.presetNameDisplay.addEventListener('click', () => {
-                    if (this.currentPresetId) {
-                        this.renamePreset(this.currentPresetId);
-                    }
+                    this.savePreset();
                 });
                 this.presetNameDisplay.style.cursor = 'pointer';
 
