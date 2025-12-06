@@ -1,4 +1,4 @@
-const CACHE_NAME = 'metronome-v4.4';
+const CACHE_NAME = 'metronome-v4.6';
 const urlsToCache = [
   '/',
   '/index.html',
