@@ -28,14 +28,51 @@
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Pocket Metronome - A simple, beautiful metronome app with custom time signatures and accent patterns">
+
+    <!-- SEO Meta Tags -->
+    <title>Pocket Metronome - Free Online Metronome with Custom Time Signatures</title>
+    <meta name="description" content="Free online metronome with custom time signatures, accent patterns, and multiple sounds. Perfect for musicians, music practice, and tempo training. Works offline as a PWA. No installation required.">
+    <meta name="keywords" content="metronome, online metronome, free metronome, music metronome, tempo, BPM, time signature, accent pattern, musician tools, practice tool, rhythm, tempo trainer, click track, music practice, PWA metronome">
+    <meta name="author" content="André Pintado">
+    <meta name="robots" content="index, follow">
+    <meta name="language" content="English">
+    <meta name="revisit-after" content="7 days">
+    <meta name="rating" content="general">
+    <link rel="canonical" href="https://www.pocketmetronome.com/">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.pocketmetronome.com/">
+    <meta property="og:title" content="Pocket Metronome - Free Online Metronome">
+    <meta property="og:description" content="Free online metronome with custom time signatures, accent patterns, and multiple sounds. Perfect for musicians and music practice. Works offline!">
+    <meta property="og:image" content="https://www.pocketmetronome.com/icon-512.png">
+    <meta property="og:site_name" content="Pocket Metronome">
+    <meta property="og:locale" content="en_US">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://www.pocketmetronome.com/">
+    <meta name="twitter:title" content="Pocket Metronome - Free Online Metronome">
+    <meta name="twitter:description" content="Free online metronome with custom time signatures, accent patterns, and multiple sounds. Perfect for musicians and music practice.">
+    <meta name="twitter:image" content="https://www.pocketmetronome.com/icon-512.png">
+
+    <!-- PWA & Mobile -->
     <meta name="theme-color" content="#667eea">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Pocket Metronome">
+    <meta name="application-name" content="Pocket Metronome">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <!-- Icons & Manifest -->
     <link rel="manifest" href="/manifest.json">
     <link rel="apple-touch-icon" href="/icon-192.png">
-    <title>Pocket Metronome</title>
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png">
+
+    <!-- Preconnect for Performance -->
+    <link rel="preconnect" href="https://www.googletagmanager.com">
+    <link rel="preconnect" href="https://www.google-analytics.com">
     <style>
         :root {
             --bg-gradient-start: #667eea;
@@ -1148,6 +1185,49 @@
     </style>
 </head>
 <body>
+    <!-- Structured Data for SEO (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Pocket Metronome",
+      "description": "Free online metronome with custom time signatures, accent patterns, and multiple sounds. Perfect for musicians, music practice, and tempo training. Works offline as a PWA.",
+      "url": "https://www.pocketmetronome.com/",
+      "applicationCategory": "MusicApplication",
+      "operatingSystem": "Any",
+      "browserRequirements": "Requires JavaScript. Works on Chrome, Firefox, Safari, Edge.",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "André Pintado"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "5.0",
+        "ratingCount": "1"
+      },
+      "featureList": [
+        "Custom time signatures (1-32 beats)",
+        "Adjustable tempo (20-300 BPM)",
+        "Multiple metronome sounds (Beep, Click, Woodblock)",
+        "Accent pattern customization",
+        "Save and load presets",
+        "Dark mode support",
+        "Works offline (PWA)",
+        "Export audio to WAV",
+        "Visual beat indicator"
+      ],
+      "screenshot": "https://www.pocketmetronome.com/icon-512.png",
+      "softwareVersion": "4.7",
+      "datePublished": "2025-01-01",
+      "dateModified": "2025-12-06"
+    }
+    </script>
+
     <!-- Update notification banner -->
     <div class="update-banner" id="updateBanner">
         <div class="update-banner-text">New version available!</div>

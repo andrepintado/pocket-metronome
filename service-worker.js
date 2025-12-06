@@ -1,8 +1,10 @@
-const CACHE_NAME = 'metronome-v4.7';
+const CACHE_NAME = 'metronome-v4.8';
 const urlsToCache = [
   '/',
   '/index.html',
-  '/manifest.json'
+  '/manifest.json',
+  '/robots.txt',
+  '/sitemap.xml'
 ];
 
 // Message handler for skipWaiting
