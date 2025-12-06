@@ -2353,6 +2353,19 @@
                     this.closePresetsModal();
                 });
 
+                // Close modals when clicking on the modal background (but not on content)
+                this.settingsModal.addEventListener('click', (e) => {
+                    if (e.target === this.settingsModal) {
+                        this.closeSettings();
+                    }
+                });
+
+                this.presetsModal.addEventListener('click', (e) => {
+                    if (e.target === this.presetsModal) {
+                        this.closePresetsModal();
+                    }
+                });
+
                 // Presets
                 this.savePresetBtn.addEventListener('click', () => this.savePreset());
                 this.presetsListBtn.addEventListener('click', () => this.openPresetsModal());
