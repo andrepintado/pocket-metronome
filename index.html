@@ -2426,6 +2426,8 @@
                 this.settingsOverlay.addEventListener('click', () => {
                     this.closeSettings();
                     this.closePresetsModal();
+                    this.hideInfoModal();
+                    this.hideSaveConfirmModal();
                 });
 
                 // Close modals when clicking on the modal background (but not on content)
@@ -2481,20 +2483,6 @@
                 // Info button and modal
                 this.infoBtn.addEventListener('click', () => this.showInfoModal());
                 this.infoModalClose.addEventListener('click', () => this.hideInfoModal());
-
-                // Close info modal when clicking outside
-                this.infoModal.addEventListener('click', (e) => {
-                    if (e.target === this.infoModal) {
-                        this.hideInfoModal();
-                    }
-                });
-
-                // Close save confirm modal when clicking outside
-                this.saveConfirmModal.addEventListener('click', (e) => {
-                    if (e.target === this.saveConfirmModal) {
-                        this.confirmSaveConfirmNo();
-                    }
-                });
 
                 // Advanced settings - time signature
                 this.timeSigNumeratorInput.addEventListener('change', (e) => {
