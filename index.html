@@ -854,6 +854,15 @@
             flex-direction: column;
             align-items: center;
             gap: 5px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .beat-note:hover {
+            background: var(--input-border);
+            transform: scale(1.05);
         }
 
         .beat-note .note-symbol {
@@ -1162,7 +1171,7 @@
     <div class="info-modal" id="infoModal">
         <h3>🎵 Pocket Metronome</h3>
         <p>Created by <strong>André Pintado</strong></p>
-        <p><a href="mailto:andrepintado@gmail.com" style="color: var(--accent-color); text-decoration: none;">andrepintado@gmail.com</a></p>
+        <p>Bugs & suggestions: <a href="mailto:info@pocketmetronome.com" style="color: var(--accent-color); text-decoration: none;">info@pocketmetronome.com</a></p>
         <p>This is a non-profit project, made with ❤️ for musicians.</p>
         <button class="info-modal-close" id="infoModalClose">Close</button>
     </div>
@@ -1210,10 +1219,7 @@
 
         <div class="settings-group">
             <h3>Accent Pattern</h3>
-            <div class="accent-grid" id="accentGrid">
-                <!-- Dynamically generated based on time signature -->
-            </div>
-            <div class="preview-label">Preview</div>
+            <div class="preview-label">Click on the notes to toggle accents</div>
             <div class="beat-preview" id="beatPreview">
                 <!-- Dynamically generated beat notation -->
             </div>
@@ -1354,7 +1360,6 @@
                 this.timeSigNumeratorInput = document.getElementById('timeSigNumerator');
                 this.timeSigDenominatorInput = document.getElementById('timeSigDenominator');
                 this.soundTypeSelect = document.getElementById('soundType');
-                this.accentGrid = document.getElementById('accentGrid');
                 this.beatPreview = document.getElementById('beatPreview');
                 this.exportBtn = document.getElementById('exportBtn');
 
@@ -2199,7 +2204,6 @@
 
             updateAccentGrid() {
                 const beats = this.timeSigNumerator;
-                this.accentGrid.innerHTML = '';
 
                 // Resize accent pattern if needed
                 if (this.accentPattern.length !== beats) {
@@ -2207,25 +2211,7 @@
                     this.accentPattern[0] = true; // Accent first beat by default
                 }
 
-                // Create beat buttons
-                for (let i = 0; i < beats; i++) {
-                    const beatBtn = document.createElement('div');
-                    beatBtn.className = 'accent-beat';
-                    if (this.accentPattern[i]) {
-                        beatBtn.classList.add('active');
-                    }
-                    beatBtn.textContent = i + 1;
-                    beatBtn.addEventListener('click', () => {
-                        this.accentPattern[i] = !this.accentPattern[i];
-                        beatBtn.classList.toggle('active');
-                        this.updateBeatPreview();
-                        this.saveSettings();
-                        this.markAsModified();
-                    });
-                    this.accentGrid.appendChild(beatBtn);
-                }
-
-                // Update the beat preview when accent grid changes
+                // Update the beat preview to reflect accent changes
                 this.updateBeatPreview();
             }
 
@@ -2259,6 +2245,7 @@
                 for (let i = 0; i < this.timeSigNumerator; i++) {
                     const beatNote = document.createElement('div');
                     beatNote.className = 'beat-note';
+                    beatNote.style.cursor = 'pointer';
 
                     // Accent mark (shows above the note)
                     const accentMark = document.createElement('div');
@@ -2278,6 +2265,15 @@
                     beatNote.appendChild(accentMark);
                     beatNote.appendChild(noteElem);
                     beatNote.appendChild(beatNum);
+
+                    // Make beat note clickable to toggle accent
+                    beatNote.addEventListener('click', () => {
+                        this.accentPattern[i] = !this.accentPattern[i];
+                        accentMark.textContent = this.accentPattern[i] ? '>' : '';
+                        this.saveSettings();
+                        this.markAsModified();
+                    });
+
                     this.beatPreview.appendChild(beatNote);
                 }
             }
