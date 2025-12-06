@@ -8,7 +8,23 @@
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
 
-      gtag('config', 'G-GW4YKXGXHF');
+      // Detect if running as PWA or web browser
+      const isPWA = window.matchMedia('(display-mode: standalone)').matches ||
+                    window.navigator.standalone ||
+                    document.referrer.includes('android-app://');
+
+      gtag('config', 'G-GW4YKXGXHF', {
+        'custom_map': {
+          'dimension1': 'app_mode'
+        },
+        'app_mode': isPWA ? 'PWA' : 'Web Browser'
+      });
+
+      // Send an event to track the app mode
+      gtag('event', 'app_launch', {
+        'app_mode': isPWA ? 'PWA' : 'Web Browser',
+        'display_mode': isPWA ? 'standalone' : 'browser'
+      });
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
