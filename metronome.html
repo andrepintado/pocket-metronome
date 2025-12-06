@@ -1,0 +1,2687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Pocket Metronome - A simple, beautiful metronome app with custom time signatures and accent patterns">
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Pocket Metronome">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/icon-192.png">
+    <title>Pocket Metronome</title>
+    <style>
+        :root {
+            --bg-gradient-start: #667eea;
+            --bg-gradient-end: #764ba2;
+            --container-bg: #ffffff;
+            --text-primary: #333333;
+            --text-secondary: #555555;
+            --text-tertiary: #666666;
+            --input-bg: #f7f7f7;
+            --input-border: #dddddd;
+            --accent-color: #667eea;
+            --accent-hover: #5568d3;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+        }
+
+        body.dark-mode {
+            --bg-gradient-start: #1a1a2e;
+            --bg-gradient-end: #16213e;
+            --container-bg: #0f1419;
+            --text-primary: #e4e4e7;
+            --text-secondary: #a1a1aa;
+            --text-tertiary: #71717a;
+            --input-bg: #1f2937;
+            --input-border: #374151;
+            --accent-color: #818cf8;
+            --accent-hover: #6366f1;
+            --shadow-color: rgba(0, 0, 0, 0.6);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            transition: background 0.3s ease;
+        }
+
+        .container {
+            background: var(--container-bg);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px var(--shadow-color);
+            max-width: 500px;
+            width: 100%;
+            position: relative;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--text-primary);
+            margin-top: 45px;
+            margin-bottom: 10px;
+            font-size: 2em;
+            transition: color 0.3s ease;
+        }
+
+        .preset-name {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            margin-bottom: 25px;
+            font-style: italic;
+            transition: color 0.3s ease;
+        }
+
+        .preset-name.modified {
+            color: var(--accent-color);
+        }
+
+        .preset-name.modified::after {
+            content: " *";
+        }
+
+        .control-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            color: var(--text-secondary);
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+            transition: color 0.3s ease;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 15px;
+            right: 65px;
+            background: var(--input-bg);
+            border: 2px solid var(--input-border);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            min-width: 40px;
+            min-height: 40px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+            transition: all 0.3s ease;
+            padding: 0;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            border-color: var(--accent-color);
+        }
+
+        .info-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--input-bg);
+            border: 2px solid var(--input-border);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            min-width: 40px;
+            min-height: 40px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+            transition: all 0.3s ease;
+            padding: 0;
+        }
+
+        .info-btn:hover {
+            transform: scale(1.1);
+            border-color: var(--accent-color);
+        }
+
+        .new-metronome-btn {
+            position: absolute;
+            top: 15px;
+            right: 265px;
+            background: var(--input-bg);
+            border: 2px solid var(--input-border);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            min-width: 40px;
+            min-height: 40px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+            transition: all 0.3s ease;
+            padding: 0;
+        }
+
+        .new-metronome-btn:hover {
+            transform: scale(1.1);
+            border-color: var(--accent-color);
+        }
+
+        .settings-toggle {
+            position: absolute;
+            top: 15px;
+            right: 115px;
+            background: var(--input-bg);
+            border: 2px solid var(--input-border);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            min-width: 40px;
+            min-height: 40px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+            transition: all 0.3s ease;
+            padding: 0;
+        }
+
+        .settings-toggle:hover {
+            transform: scale(1.1) rotate(90deg);
+            border-color: var(--accent-color);
+        }
+
+        .save-preset-btn {
+            position: absolute;
+            top: 15px;
+            right: 215px;
+            background: var(--input-bg);
+            border: 2px solid var(--input-border);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            min-width: 40px;
+            min-height: 40px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+            transition: all 0.3s ease;
+            padding: 0;
+        }
+
+        .save-preset-btn:hover {
+            transform: scale(1.1);
+            border-color: var(--accent-color);
+        }
+
+        .presets-list-btn {
+            position: absolute;
+            top: 15px;
+            right: 165px;
+            background: var(--input-bg);
+            border: 2px solid var(--input-border);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            min-width: 40px;
+            min-height: 40px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+            transition: all 0.3s ease;
+            padding: 0;
+        }
+
+        .presets-list-btn:hover {
+            transform: scale(1.1);
+            border-color: var(--accent-color);
+        }
+
+        .settings-modal {
+            position: fixed;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            max-width: 500px;
+            height: 100vh;
+            background: var(--container-bg);
+            box-shadow: 5px 0 20px var(--shadow-color);
+            transition: left 0.3s ease;
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 60px 30px 30px 30px;
+        }
+
+        .settings-modal.open {
+            left: 0;
+        }
+
+        .settings-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+
+        .settings-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .presets-modal {
+            position: fixed;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            max-width: 500px;
+            height: 100vh;
+            background: var(--container-bg);
+            box-shadow: 5px 0 20px var(--shadow-color);
+            transition: left 0.3s ease;
+            z-index: 1001;
+            overflow-y: auto;
+            padding: 60px 30px 30px 30px;
+        }
+
+        .presets-modal.open {
+            left: 0;
+        }
+
+        .presets-modal h2 {
+            color: var(--text-primary);
+            margin-bottom: 25px;
+            font-size: 1.5em;
+        }
+
+        .presets-empty {
+            text-align: center;
+            color: var(--text-tertiary);
+            padding: 40px 20px;
+            font-style: italic;
+        }
+
+        .preset-item {
+            background: var(--input-bg);
+            border: 2px solid var(--input-border);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: grab;
+            transition: all 0.2s ease;
+        }
+
+        .preset-item:hover {
+            border-color: var(--accent-color);
+            transform: translateX(5px);
+        }
+
+        .preset-item.dragging {
+            opacity: 0.5;
+            cursor: grabbing;
+        }
+
+        .preset-item .drag-handle {
+            font-size: 1.2em;
+            color: var(--text-tertiary);
+            cursor: grab;
+            user-select: none;
+        }
+
+        .preset-item .preset-info {
+            flex: 1;
+            cursor: pointer;
+        }
+
+        .preset-item .preset-name-text {
+            color: var(--text-primary);
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .preset-item .preset-details {
+            color: var(--text-tertiary);
+            font-size: 0.85em;
+        }
+
+        .preset-item .delete-btn {
+            background: transparent;
+            color: #ef4444;
+            border: 2px solid var(--input-border);
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-width: 44px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .preset-item .delete-btn:hover {
+            background: #fee;
+            border-color: #ef4444;
+        }
+
+        .preset-item .duplicate-btn {
+            background: transparent;
+            color: var(--accent-color);
+            border: 2px solid var(--input-border);
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-width: 44px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .preset-item .duplicate-btn:hover {
+            background: var(--input-bg);
+            border-color: var(--accent-color);
+        }
+
+        .preset-item .duplicate-btn:nth-of-type(2) {
+            color: #10b981;
+            font-size: 1.4em;
+        }
+
+        .preset-item .duplicate-btn:nth-of-type(2):hover {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        /* Name Input Modal */
+        .name-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            background: var(--container-bg);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 60px var(--shadow-color);
+            z-index: 1002;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .name-modal.open {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .name-modal h3 {
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            font-size: 1.3em;
+        }
+
+        .name-modal input {
+            width: 100%;
+            padding: 12px;
+            font-size: 1em;
+            border: 2px solid var(--input-border);
+            border-radius: 8px;
+            background: var(--input-bg);
+            color: var(--text-primary);
+            margin-bottom: 20px;
+        }
+
+        .name-modal input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        .name-modal-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .name-modal-buttons button {
+            flex: 1;
+            padding: 12px;
+            font-size: 1em;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .name-modal-cancel {
+            background: var(--input-bg);
+            color: var(--text-primary);
+            border: 2px solid var(--input-border);
+        }
+
+        .name-modal-cancel:hover {
+            border-color: var(--accent-color);
+        }
+
+        .name-modal-confirm {
+            background: var(--accent-color);
+            color: white;
+            border: 2px solid var(--accent-color);
+        }
+
+        .name-modal-confirm:hover {
+            background: var(--accent-hover);
+            border-color: var(--accent-hover);
+        }
+
+        /* Delete Confirmation Modal */
+        .delete-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            background: var(--container-bg);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 60px var(--shadow-color);
+            z-index: 1002;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .delete-modal.open {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .delete-modal h3 {
+            color: var(--text-primary);
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .delete-modal p {
+            color: var(--text-secondary);
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .delete-modal-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .delete-modal-buttons button {
+            flex: 1;
+            padding: 12px;
+            font-size: 1em;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .delete-modal-cancel {
+            background: var(--input-bg);
+            color: var(--text-primary);
+            border: 2px solid var(--input-border);
+        }
+
+        .delete-modal-cancel:hover {
+            border-color: var(--accent-color);
+        }
+
+        .delete-modal-confirm {
+            background: #ef4444;
+            color: white;
+            border: 2px solid #ef4444;
+        }
+
+        .delete-modal-confirm:hover {
+            background: #dc2626;
+            border-color: #dc2626;
+        }
+
+        /* Save Confirmation Modal */
+        .save-confirm-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            background: var(--container-bg);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 60px var(--shadow-color);
+            z-index: 1002;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .save-confirm-modal.open {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .save-confirm-modal h3 {
+            color: var(--text-primary);
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .save-confirm-modal p {
+            color: var(--text-secondary);
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .save-confirm-modal-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .save-confirm-modal-buttons button {
+            flex: 1;
+            padding: 12px;
+            font-size: 1em;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .save-confirm-cancel {
+            background: var(--input-bg);
+            color: var(--text-primary);
+            border: 2px solid var(--input-border);
+        }
+
+        .save-confirm-cancel:hover {
+            border-color: var(--accent-color);
+        }
+
+        .save-confirm-yes {
+            background: var(--accent-color);
+            color: white;
+            border: 2px solid var(--accent-color);
+        }
+
+        .save-confirm-yes:hover {
+            background: var(--accent-hover);
+            border-color: var(--accent-hover);
+        }
+
+        /* Info Modal */
+        .info-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            background: var(--container-bg);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 60px var(--shadow-color);
+            z-index: 1002;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .info-modal.open {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .info-modal h3 {
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .info-modal p {
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .info-modal-close {
+            background: var(--accent-color);
+            color: white;
+            border: 2px solid var(--accent-color);
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.2s ease;
+            margin-top: 10px;
+        }
+
+        .info-modal-close:hover {
+            background: var(--accent-hover);
+            border-color: var(--accent-hover);
+        }
+
+        .settings-modal h2 {
+            color: var(--text-primary);
+            margin-bottom: 25px;
+            font-size: 1.5em;
+        }
+
+        .settings-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: transparent;
+            border: none;
+            font-size: 2em;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 5px 10px;
+            line-height: 1;
+        }
+
+        .settings-close:hover {
+            color: var(--accent-color);
+        }
+
+        .settings-group {
+            margin-bottom: 30px;
+        }
+
+        .settings-group h3 {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            font-size: 1em;
+            border: 2px solid var(--input-border);
+            border-radius: 8px;
+            background: var(--input-bg);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        .accent-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+            gap: 10px;
+            max-width: 100%;
+        }
+
+        .accent-beat {
+            aspect-ratio: 1;
+            border: 2px solid var(--input-border);
+            border-radius: 8px;
+            background: var(--input-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            max-width: 80px;
+        }
+
+        .accent-beat:hover {
+            border-color: var(--accent-color);
+        }
+
+        .accent-beat.active {
+            background: var(--accent-color);
+            border-color: var(--accent-color);
+            color: white;
+        }
+
+        .time-signature-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .time-signature-input input {
+            flex: 1;
+            text-align: center;
+        }
+
+        .time-signature-input span {
+            color: var(--text-secondary);
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .preview-label {
+            color: var(--text-secondary);
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-top: 20px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .beat-preview {
+            display: flex;
+            justify-content: flex-start;
+            align-items: flex-end;
+            gap: 20px;
+            padding: 20px;
+            background: var(--input-bg);
+            border-radius: 10px;
+            min-height: 80px;
+            overflow-x: auto;
+        }
+
+        .beat-note {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .beat-note .note-symbol {
+            font-size: 2.5em;
+            color: var(--text-primary);
+            line-height: 1;
+        }
+
+        .beat-note .accent-mark {
+            font-size: 1.2em;
+            color: var(--accent-color);
+            font-weight: bold;
+            height: 20px;
+        }
+
+        .beat-note .beat-number {
+            font-size: 0.8em;
+            color: var(--text-tertiary);
+            margin-top: 5px;
+        }
+
+        .tempo-control {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .tempo-display {
+            flex: 1;
+            text-align: center;
+            font-size: 3em;
+            font-weight: bold;
+            color: var(--accent-color);
+            padding: 20px;
+            background: var(--input-bg);
+            border-radius: 10px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            cursor: text;
+        }
+
+        .tempo-display:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            background: var(--container-bg);
+        }
+
+        .tempo-display::-webkit-inner-spin-button,
+        .tempo-display::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .tempo-display[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        button {
+            padding: 15px 25px;
+            font-size: 1.2em;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .tempo-btn {
+            background: var(--accent-color);
+            color: white;
+            font-size: 1.5em;
+            width: 60px;
+            height: 60px;
+            padding: 0;
+        }
+
+        .tempo-btn:hover {
+            background: var(--accent-hover);
+            transform: scale(1.05);
+        }
+
+        .tempo-btn:active {
+            transform: scale(0.95);
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            font-size: 1em;
+            border: 2px solid var(--input-border);
+            border-radius: 8px;
+            background: var(--input-bg);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: var(--input-border);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            border: none;
+        }
+
+        .volume-display {
+            text-align: right;
+            color: var(--accent-color);
+            font-weight: 600;
+            margin-top: 5px;
+            transition: color 0.3s ease;
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .control-btn {
+            flex: 1;
+            padding: 20px;
+            font-size: 1.3em;
+            color: white;
+        }
+
+        .start-pause-btn {
+            background: #10b981;
+        }
+
+        .start-pause-btn:hover {
+            background: #059669;
+        }
+
+        .start-pause-btn.paused {
+            background: #f59e0b;
+        }
+
+        .start-pause-btn.paused:hover {
+            background: #d97706;
+        }
+
+        .stop-btn {
+            background: #ef4444;
+        }
+
+        .stop-btn:hover {
+            background: #dc2626;
+        }
+
+        .stop-btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        .beat-indicator {
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px;
+            background: var(--input-bg);
+            border-radius: 10px;
+            color: var(--text-tertiary);
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+
+        .beat-indicator.active {
+            background: var(--accent-color);
+            color: white;
+            transform: scale(1.05);
+            transition: all 0.1s;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px 20px;
+            }
+
+            .container {
+                padding: 25px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+                margin-top: 50px;
+            }
+
+            .tempo-display {
+                font-size: 2.5em;
+            }
+
+            button {
+                padding: 12px 20px;
+            }
+
+            .tempo-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 1.2em;
+            }
+        }
+
+        /* Update notification banner */
+        .update-banner {
+            position: fixed;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #10b981;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            z-index: 10000;
+            transition: top 0.3s ease;
+            max-width: 90%;
+        }
+
+        .update-banner.show {
+            top: 0;
+        }
+
+        .update-banner-text {
+            flex: 1;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        .update-banner-btn {
+            background: white;
+            color: #10b981;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.2s ease;
+        }
+
+        .update-banner-btn:hover {
+            background: #f0f0f0;
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 480px) {
+            .update-banner {
+                padding: 12px 20px;
+                font-size: 0.9em;
+            }
+
+            .update-banner-btn {
+                padding: 6px 12px;
+                font-size: 0.85em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Update notification banner -->
+    <div class="update-banner" id="updateBanner">
+        <div class="update-banner-text">New version available!</div>
+        <button class="update-banner-btn" id="updateBtn">Refresh</button>
+    </div>
+
+    <div class="settings-overlay" id="settingsOverlay"></div>
+
+    <!-- Save Confirmation Modal -->
+    <div class="save-confirm-modal" id="saveConfirmModal">
+        <h3>Save current metronome?</h3>
+        <p>You have unsaved changes. Would you like to save them before creating a new metronome?</p>
+        <div class="save-confirm-modal-buttons">
+            <button class="save-confirm-cancel" id="saveConfirmNo">No</button>
+            <button class="save-confirm-yes" id="saveConfirmYes">Yes</button>
+        </div>
+    </div>
+
+    <!-- Info Modal -->
+    <div class="info-modal" id="infoModal">
+        <h3>🎵 Pocket Metronome</h3>
+        <p>Created by <strong>André Pintado</strong></p>
+        <p><a href="mailto:andrepintado@gmail.com" style="color: var(--accent-color); text-decoration: none;">andrepintado@gmail.com</a></p>
+        <p>This is a non-profit project, made with ❤️ for musicians.</p>
+        <button class="info-modal-close" id="infoModalClose">Close</button>
+    </div>
+
+    <!-- Name Input Modal -->
+    <div class="name-modal" id="nameModal">
+        <h3 id="nameModalTitle">Enter metronome name</h3>
+        <input type="text" id="nameModalInput" placeholder="e.g., Song Practice, Waltz, etc." />
+        <div class="name-modal-buttons">
+            <button class="name-modal-cancel" id="nameModalCancel">Cancel</button>
+            <button class="name-modal-confirm" id="nameModalConfirm">Save</button>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="delete-modal" id="deleteModal">
+        <h3>Delete Metronome</h3>
+        <p id="deleteModalMessage">Are you sure you want to delete this metronome? This action cannot be undone.</p>
+        <div class="delete-modal-buttons">
+            <button class="delete-modal-cancel" id="deleteModalCancel">Cancel</button>
+            <button class="delete-modal-confirm" id="deleteModalConfirm">Delete</button>
+        </div>
+    </div>
+
+    <div class="presets-modal" id="presetsModal">
+        <button class="settings-close" id="presetsClose">×</button>
+        <h2>Saved Metronomes</h2>
+        <div id="presetsList">
+            <div class="presets-empty">No metronomes saved yet</div>
+        </div>
+    </div>
+
+    <div class="settings-modal" id="settingsModal">
+        <button class="settings-close" id="settingsClose">×</button>
+        <h2>Advanced Settings</h2>
+
+        <div class="settings-group">
+            <h3>Time Signature</h3>
+            <div class="time-signature-input">
+                <input type="number" id="timeSigNumerator" min="1" max="32" value="4">
+                <span>/</span>
+                <input type="number" id="timeSigDenominator" min="1" max="16" value="4">
+            </div>
+        </div>
+
+        <div class="settings-group">
+            <h3>Accent Pattern</h3>
+            <div class="accent-grid" id="accentGrid">
+                <!-- Dynamically generated based on time signature -->
+            </div>
+            <div class="preview-label">Preview</div>
+            <div class="beat-preview" id="beatPreview">
+                <!-- Dynamically generated beat notation -->
+            </div>
+        </div>
+
+        <div class="settings-group">
+            <h3>Starting Beats (count-in)</h3>
+            <input type="number" id="startingBeats" min="0" max="16" value="4">
+        </div>
+
+        <div class="settings-group">
+            <h3>Metronome Sound</h3>
+            <select id="soundType">
+                <option value="beep">Beep (Default)</option>
+                <option value="click">Click</option>
+                <option value="woodblock">Woodblock</option>
+            </select>
+        </div>
+
+        <div class="settings-group">
+            <h3>Export Audio</h3>
+            <button id="exportBtn" style="width: 100%; padding: 12px; font-size: 1em; border-radius: 8px; background: var(--accent-color); color: white; border: 2px solid var(--accent-color); cursor: pointer; transition: all 0.2s ease;">
+                Export as WAV
+            </button>
+        </div>
+    </div>
+
+    <div class="container">
+        <button class="new-metronome-btn" id="newMetronomeBtn" aria-label="New metronome" title="New metronome">
+            ➕
+        </button>
+        <button class="save-preset-btn" id="savePresetBtn" aria-label="Save current metronome" title="Save current metronome">
+            💾
+        </button>
+        <button class="presets-list-btn" id="presetsListBtn" aria-label="View saved metronomes" title="View saved metronomes">
+            📋
+        </button>
+        <button class="settings-toggle" id="settingsToggle" aria-label="Advanced settings" title="Advanced settings">
+            ⚙️
+        </button>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+            🌙
+        </button>
+        <button class="info-btn" id="infoBtn" aria-label="About this app" title="About this app">
+            ℹ️
+        </button>
+        <h1>🎵 Pocket Metronome</h1>
+        <div class="preset-name" id="presetName" title="Click to rename">Unsaved</div>
+
+        <div class="control-group">
+            <label>Tempo (BPM)</label>
+            <div class="tempo-control">
+                <button class="tempo-btn" id="decreaseTempo" title="Decrease tempo">−</button>
+                <input type="number" class="tempo-display" id="tempoDisplay" value="120" min="30" max="300" title="Enter tempo manually">
+                <button class="tempo-btn" id="increaseTempo" title="Increase tempo">+</button>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label for="totalBeats">Total Beats (0 = unlimited)</label>
+            <input type="number" id="totalBeats" min="0" value="0">
+        </div>
+
+        <div class="control-group">
+            <label for="volume">Volume</label>
+            <input type="range" id="volume" min="0" max="100" value="70">
+            <div class="volume-display"><span id="volumeDisplay">70</span>%</div>
+        </div>
+
+        <div class="control-buttons">
+            <button class="control-btn start-pause-btn" id="startPauseBtn" title="Start/Pause metronome">START</button>
+            <button class="control-btn stop-btn" id="stopBtn" disabled title="Stop and reset metronome">STOP</button>
+        </div>
+
+        <div class="beat-indicator" id="beatIndicator">
+            Ready to start
+        </div>
+    </div>
+
+    <script>
+        class Metronome {
+            constructor() {
+                this.audioContext = null;
+                this.audioBuffers = {}; // Store loaded audio samples
+                this.audioLoaded = false;
+                this.tempo = 120;
+                this.volume = 0.7;
+                this.startingBeats = 4;
+                this.totalBeats = 0;
+                this.currentBeat = 0;
+                this.isPlaying = false;
+                this.isPaused = false;
+                this.isCountIn = false;
+                this.schedulerTimer = null;
+                this.nextNoteTime = 0;
+                this.scheduleAheadTime = 0.1; // How far ahead to schedule audio (sec)
+                this.lookahead = 25.0; // How frequently to call scheduling function (ms)
+                this.tempoChangeTimer = null;
+                this.tempoChangeInterval = 200; // Initial delay in ms
+                this.tempoHoldTime = 0;
+
+                // Advanced settings
+                this.timeSigNumerator = 4;
+                this.timeSigDenominator = 4;
+                this.accentPattern = [true, false, false, false]; // First beat accented by default
+                this.soundType = 'beep';
+
+                // Preset management
+                this.presets = [];
+                this.currentPresetId = null;
+                this.currentPresetName = null;
+                this.isModified = false;
+                this.nameModalCallback = null;
+
+                this.initElements();
+                this.initAudio();
+                this.initTheme();
+                this.loadSettings();
+                this.loadPresets();
+                this.attachEventListeners();
+                this.updateAccentGrid();
+            }
+
+            initElements() {
+                this.tempoDisplay = document.getElementById('tempoDisplay');
+                this.startPauseBtn = document.getElementById('startPauseBtn');
+                this.stopBtn = document.getElementById('stopBtn');
+                this.beatIndicator = document.getElementById('beatIndicator');
+                this.volumeSlider = document.getElementById('volume');
+                this.volumeDisplay = document.getElementById('volumeDisplay');
+                this.startingBeatsInput = document.getElementById('startingBeats');
+                this.totalBeatsInput = document.getElementById('totalBeats');
+                this.themeToggle = document.getElementById('themeToggle');
+                this.settingsToggle = document.getElementById('settingsToggle');
+                this.settingsModal = document.getElementById('settingsModal');
+                this.settingsOverlay = document.getElementById('settingsOverlay');
+                this.settingsClose = document.getElementById('settingsClose');
+                this.timeSigNumeratorInput = document.getElementById('timeSigNumerator');
+                this.timeSigDenominatorInput = document.getElementById('timeSigDenominator');
+                this.soundTypeSelect = document.getElementById('soundType');
+                this.accentGrid = document.getElementById('accentGrid');
+                this.beatPreview = document.getElementById('beatPreview');
+                this.exportBtn = document.getElementById('exportBtn');
+
+                // Preset elements
+                this.presetNameDisplay = document.getElementById('presetName');
+                this.savePresetBtn = document.getElementById('savePresetBtn');
+                this.presetsListBtn = document.getElementById('presetsListBtn');
+                this.presetsModal = document.getElementById('presetsModal');
+                this.presetsClose = document.getElementById('presetsClose');
+                this.presetsList = document.getElementById('presetsList');
+
+                // Name modal elements
+                this.nameModal = document.getElementById('nameModal');
+                this.nameModalTitle = document.getElementById('nameModalTitle');
+                this.nameModalInput = document.getElementById('nameModalInput');
+                this.nameModalCancel = document.getElementById('nameModalCancel');
+                this.nameModalConfirm = document.getElementById('nameModalConfirm');
+
+                // Delete modal elements
+                this.deleteModal = document.getElementById('deleteModal');
+                this.deleteModalMessage = document.getElementById('deleteModalMessage');
+                this.deleteModalCancel = document.getElementById('deleteModalCancel');
+                this.deleteModalConfirm = document.getElementById('deleteModalConfirm');
+                this.deleteModalCallback = null;
+
+                // New metronome and info elements
+                this.newMetronomeBtn = document.getElementById('newMetronomeBtn');
+                this.infoBtn = document.getElementById('infoBtn');
+                this.saveConfirmModal = document.getElementById('saveConfirmModal');
+                this.saveConfirmYes = document.getElementById('saveConfirmYes');
+                this.saveConfirmNo = document.getElementById('saveConfirmNo');
+                this.infoModal = document.getElementById('infoModal');
+                this.infoModalClose = document.getElementById('infoModalClose');
+                this.saveConfirmCallback = null;
+            }
+
+            async initAudio() {
+                this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+                // Audio samples as base64-encoded WAV files
+                const audioSamples = {
+                    // Short beep sound - clean and simple
+                    beep: 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAAB9AAACABAAZGF0YQAAAAA=',
+                    // Click sound - short and sharp
+                    click: 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAAB9AAACABAAZGF0YQAAAAA=',
+                    // Woodblock sound - deeper tone
+                    woodblock: 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAAB9AAACABAAZGF0YQAAAAA='
+                };
+
+                // Generate actual audio buffers using oscillators (better quality than empty WAV)
+                await this.generateSoundBuffers();
+            }
+
+            async generateSoundBuffers() {
+                const sampleRate = this.audioContext.sampleRate;
+
+                // Create beep sound - clean sine wave
+                const beepLength = Math.floor(sampleRate * 0.05); // 50ms
+                const beepBuffer = this.audioContext.createBuffer(1, beepLength, sampleRate);
+                const beepData = beepBuffer.getChannelData(0);
+                for (let i = 0; i < beepLength; i++) {
+                    const t = i / sampleRate;
+                    const envelope = Math.exp(-t * 15); // Decay envelope
+                    beepData[i] = Math.sin(2 * Math.PI * 1000 * t) * envelope * 0.3;
+                }
+                this.audioBuffers.beep = beepBuffer;
+
+                // Create click sound - short sharp attack
+                const clickLength = Math.floor(sampleRate * 0.03); // 30ms
+                const clickBuffer = this.audioContext.createBuffer(1, clickLength, sampleRate);
+                const clickData = clickBuffer.getChannelData(0);
+                for (let i = 0; i < clickLength; i++) {
+                    const t = i / sampleRate;
+                    const envelope = Math.exp(-t * 40); // Fast decay
+                    clickData[i] = Math.sin(2 * Math.PI * 1200 * t) * envelope * 0.4;
+                }
+                this.audioBuffers.click = clickBuffer;
+
+                // Create woodblock sound - triangle wave with overtones
+                const woodLength = Math.floor(sampleRate * 0.04); // 40ms
+                const woodBuffer = this.audioContext.createBuffer(1, woodLength, sampleRate);
+                const woodData = woodBuffer.getChannelData(0);
+                for (let i = 0; i < woodLength; i++) {
+                    const t = i / sampleRate;
+                    const envelope = Math.exp(-t * 25);
+                    // Triangle wave approximation with harmonics
+                    const fundamental = Math.sin(2 * Math.PI * 700 * t);
+                    const harmonic = Math.sin(2 * Math.PI * 1400 * t) * 0.3;
+                    woodData[i] = (fundamental + harmonic) * envelope * 0.35;
+                }
+                this.audioBuffers.woodblock = woodBuffer;
+
+                this.audioLoaded = true;
+            }
+
+            initTheme() {
+                // Check for saved theme preference or default to light mode
+                const savedTheme = localStorage.getItem('metronome-theme') || 'light';
+                if (savedTheme === 'dark') {
+                    document.body.classList.add('dark-mode');
+                    this.themeToggle.textContent = '☀️';
+                }
+            }
+
+            loadSettings() {
+                // Load saved settings from localStorage
+                const settings = localStorage.getItem('metronome-settings');
+                if (settings) {
+                    try {
+                        const parsed = JSON.parse(settings);
+
+                        // Apply saved settings
+                        this.tempo = parsed.tempo || 120;
+                        this.volume = parsed.volume !== undefined ? parsed.volume : 0.7;
+                        this.startingBeats = parsed.startingBeats !== undefined ? parsed.startingBeats : 4;
+                        this.totalBeats = parsed.totalBeats || 0;
+
+                        // Apply advanced settings
+                        this.timeSigNumerator = parsed.timeSigNumerator || 4;
+                        this.timeSigDenominator = parsed.timeSigDenominator || 4;
+                        this.accentPattern = parsed.accentPattern || [true, false, false, false];
+                        this.soundType = parsed.soundType || 'beep';
+
+                        // Update UI elements
+                        this.updateTempoDisplay();
+                        this.volumeSlider.value = Math.round(this.volume * 100);
+                        this.volumeDisplay.textContent = Math.round(this.volume * 100);
+                        this.startingBeatsInput.value = this.startingBeats;
+                        this.totalBeatsInput.value = this.totalBeats;
+                        this.timeSigNumeratorInput.value = this.timeSigNumerator;
+                        this.timeSigDenominatorInput.value = this.timeSigDenominator;
+                        this.soundTypeSelect.value = this.soundType;
+                    } catch (e) {
+                        console.error('Failed to load settings:', e);
+                    }
+                }
+            }
+
+            saveSettings() {
+                // Save current settings to localStorage
+                const settings = {
+                    tempo: this.tempo,
+                    volume: this.volume,
+                    startingBeats: this.startingBeats,
+                    totalBeats: this.totalBeats,
+                    timeSigNumerator: this.timeSigNumerator,
+                    timeSigDenominator: this.timeSigDenominator,
+                    accentPattern: this.accentPattern,
+                    soundType: this.soundType
+                };
+                localStorage.setItem('metronome-settings', JSON.stringify(settings));
+            }
+
+            toggleTheme() {
+                document.body.classList.toggle('dark-mode');
+                const isDark = document.body.classList.contains('dark-mode');
+
+                // Update button icon
+                this.themeToggle.textContent = isDark ? '☀️' : '🌙';
+
+                // Save preference
+                localStorage.setItem('metronome-theme', isDark ? 'dark' : 'light');
+            }
+
+            openSettings() {
+                this.settingsModal.classList.add('open');
+                this.settingsOverlay.classList.add('open');
+            }
+
+            closeSettings() {
+                this.settingsModal.classList.remove('open');
+                this.settingsOverlay.classList.remove('open');
+            }
+
+            // Preset Management Methods
+
+            loadPresets() {
+                const saved = localStorage.getItem('metronome-presets');
+                if (saved) {
+                    try {
+                        this.presets = JSON.parse(saved);
+                        this.updatePresetsList();
+                    } catch (e) {
+                        console.error('Failed to load presets:', e);
+                        this.presets = [];
+                    }
+                }
+            }
+
+            savePresetsToStorage() {
+                localStorage.setItem('metronome-presets', JSON.stringify(this.presets));
+            }
+
+            getCurrentSettings() {
+                return {
+                    tempo: this.tempo,
+                    volume: this.volume,
+                    startingBeats: this.startingBeats,
+                    totalBeats: this.totalBeats,
+                    timeSigNumerator: this.timeSigNumerator,
+                    timeSigDenominator: this.timeSigDenominator,
+                    accentPattern: [...this.accentPattern],
+                    soundType: this.soundType
+                };
+            }
+
+            async savePreset() {
+                const settings = this.getCurrentSettings();
+
+                // If no current preset name, show modal to get one
+                if (!this.currentPresetName) {
+                    this.showNameModal('Enter preset name', '', (presetName) => {
+                        this.performSavePreset(presetName, settings);
+                    });
+                } else {
+                    // Update existing preset
+                    this.performSavePreset(this.currentPresetName, settings);
+                }
+            }
+
+            performSavePreset(presetName, settings) {
+                // Check if updating existing preset
+                if (this.currentPresetId) {
+                    const presetIndex = this.presets.findIndex(p => p.id === this.currentPresetId);
+                    if (presetIndex !== -1) {
+                        this.presets[presetIndex] = {
+                            ...this.presets[presetIndex],
+                            ...settings,
+                            name: presetName
+                        };
+                    }
+                } else {
+                    // Create new preset
+                    const newPreset = {
+                        id: Date.now().toString(),
+                        name: presetName,
+                        ...settings
+                    };
+                    this.presets.push(newPreset);
+                    this.currentPresetId = newPreset.id;
+                }
+
+                this.currentPresetName = presetName;
+                this.isModified = false;
+                this.savePresetsToStorage();
+                this.updatePresetsList();
+                this.updatePresetNameDisplay();
+            }
+
+            duplicatePreset(presetId) {
+                const preset = this.presets.find(p => p.id === presetId);
+                if (!preset) return;
+
+                this.showNameModal('Duplicate preset as...', `${preset.name} (copy)`, (newName) => {
+                    const newPreset = {
+                        ...preset,
+                        id: Date.now().toString(),
+                        name: newName
+                    };
+                    this.presets.push(newPreset);
+                    this.savePresetsToStorage();
+                    this.updatePresetsList();
+                });
+            }
+
+            renamePreset(presetId) {
+                const preset = this.presets.find(p => p.id === presetId);
+                if (!preset) return;
+
+                this.showNameModal('Rename preset', preset.name, (newName) => {
+                    preset.name = newName;
+
+                    // If this is the current preset, update the display
+                    if (this.currentPresetId === presetId) {
+                        this.currentPresetName = newName;
+                        this.updatePresetNameDisplay();
+                    }
+
+                    this.savePresetsToStorage();
+                    this.updatePresetsList();
+                });
+            }
+
+            loadPreset(presetId) {
+                const preset = this.presets.find(p => p.id === presetId);
+                if (!preset) return;
+
+                // Stop metronome if playing
+                if (this.isPlaying) {
+                    this.stop();
+                }
+
+                // Load all settings
+                this.tempo = preset.tempo;
+                this.volume = preset.volume;
+                this.startingBeats = preset.startingBeats;
+                this.totalBeats = preset.totalBeats;
+                this.timeSigNumerator = preset.timeSigNumerator;
+                this.timeSigDenominator = preset.timeSigDenominator;
+                this.accentPattern = [...preset.accentPattern];
+                this.soundType = preset.soundType;
+
+                // Update UI
+                this.updateTempoDisplay();
+                this.volumeSlider.value = Math.round(this.volume * 100);
+                this.volumeDisplay.textContent = Math.round(this.volume * 100);
+                this.startingBeatsInput.value = this.startingBeats;
+                this.totalBeatsInput.value = this.totalBeats;
+                this.timeSigNumeratorInput.value = this.timeSigNumerator;
+                this.timeSigDenominatorInput.value = this.timeSigDenominator;
+                this.soundTypeSelect.value = this.soundType;
+
+                this.updateAccentGrid();
+
+                // Set current preset
+                this.currentPresetId = presetId;
+                this.currentPresetName = preset.name;
+                this.isModified = false;
+                this.updatePresetNameDisplay();
+
+                // Close presets modal
+                this.closePresetsModal();
+            }
+
+            deletePreset(presetId) {
+                const preset = this.presets.find(p => p.id === presetId);
+                if (!preset) return;
+
+                const message = `Are you sure you want to delete "${preset.name}"? This action cannot be undone.`;
+
+                this.showDeleteModal(message, () => {
+                    this.presets = this.presets.filter(p => p.id !== presetId);
+
+                    // If deleting current preset, reset
+                    if (this.currentPresetId === presetId) {
+                        this.currentPresetId = null;
+                        this.currentPresetName = null;
+                        this.isModified = false;
+                        this.updatePresetNameDisplay();
+                    }
+
+                    this.savePresetsToStorage();
+                    this.updatePresetsList();
+                });
+            }
+
+            updatePresetsList() {
+                if (this.presets.length === 0) {
+                    this.presetsList.innerHTML = '<div class="presets-empty">No presets saved yet</div>';
+                    return;
+                }
+
+                this.presetsList.innerHTML = '';
+
+                this.presets.forEach((preset, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'preset-item';
+                    item.draggable = true;
+                    item.dataset.presetId = preset.id;
+                    item.dataset.index = index;
+
+                    // Drag handle
+                    const dragHandle = document.createElement('div');
+                    dragHandle.className = 'drag-handle';
+                    dragHandle.textContent = '☰';
+
+                    // Preset info
+                    const info = document.createElement('div');
+                    info.className = 'preset-info';
+                    info.innerHTML = `
+                        <div class="preset-name-text">${preset.name}</div>
+                        <div class="preset-details">${preset.tempo} BPM • ${preset.timeSigNumerator}/${preset.timeSigDenominator}</div>
+                    `;
+                    info.addEventListener('click', () => this.loadPreset(preset.id));
+
+                    // Edit button
+                    const editBtn = document.createElement('button');
+                    editBtn.className = 'duplicate-btn';
+                    editBtn.textContent = '✏️';
+                    editBtn.title = 'Rename preset';
+                    editBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        this.renamePreset(preset.id);
+                    });
+
+                    // Duplicate button
+                    const duplicateBtn = document.createElement('button');
+                    duplicateBtn.className = 'duplicate-btn';
+                    duplicateBtn.textContent = '⎘';
+                    duplicateBtn.title = 'Duplicate preset';
+                    duplicateBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        this.duplicatePreset(preset.id);
+                    });
+
+                    // Delete button
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'delete-btn';
+                    deleteBtn.textContent = '🗑️';
+                    deleteBtn.title = 'Delete preset';
+                    deleteBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        this.deletePreset(preset.id);
+                    });
+
+                    item.appendChild(dragHandle);
+                    item.appendChild(info);
+                    item.appendChild(editBtn);
+                    item.appendChild(duplicateBtn);
+                    item.appendChild(deleteBtn);
+
+                    this.presetsList.appendChild(item);
+                });
+
+                this.attachDragListeners();
+            }
+
+            updatePresetNameDisplay() {
+                if (this.currentPresetName) {
+                    this.presetNameDisplay.textContent = this.currentPresetName;
+                    if (this.isModified) {
+                        this.presetNameDisplay.classList.add('modified');
+                    } else {
+                        this.presetNameDisplay.classList.remove('modified');
+                    }
+                } else {
+                    this.presetNameDisplay.textContent = 'Unsaved';
+                    this.presetNameDisplay.classList.remove('modified');
+                }
+            }
+
+            markAsModified() {
+                // Only mark as modified if we have a current preset
+                if (this.currentPresetId && !this.isModified) {
+                    this.isModified = true;
+                    this.updatePresetNameDisplay();
+                }
+            }
+
+            openPresetsModal() {
+                this.presetsModal.classList.add('open');
+                this.settingsOverlay.classList.add('open');
+            }
+
+            closePresetsModal() {
+                this.presetsModal.classList.remove('open');
+                // Only close overlay if settings modal is also closed
+                if (!this.settingsModal.classList.contains('open')) {
+                    this.settingsOverlay.classList.remove('open');
+                }
+            }
+
+            showNameModal(title, initialValue = '', callback) {
+                this.nameModalTitle.textContent = title;
+                this.nameModalInput.value = initialValue;
+                this.nameModalCallback = callback;
+                this.nameModal.classList.add('open');
+                this.settingsOverlay.classList.add('open');
+
+                // Focus the input
+                setTimeout(() => this.nameModalInput.focus(), 100);
+            }
+
+            hideNameModal() {
+                this.nameModal.classList.remove('open');
+                // Only close overlay if modals are closed
+                if (!this.settingsModal.classList.contains('open') &&
+                    !this.presetsModal.classList.contains('open')) {
+                    this.settingsOverlay.classList.remove('open');
+                }
+                this.nameModalCallback = null;
+            }
+
+            confirmNameModal() {
+                const name = this.nameModalInput.value.trim();
+                if (name && this.nameModalCallback) {
+                    this.nameModalCallback(name);
+                }
+                this.hideNameModal();
+            }
+
+            showDeleteModal(message, callback) {
+                this.deleteModalMessage.textContent = message;
+                this.deleteModalCallback = callback;
+                this.deleteModal.classList.add('open');
+                this.settingsOverlay.classList.add('open');
+            }
+
+            hideDeleteModal() {
+                this.deleteModal.classList.remove('open');
+                // Only close overlay if modals are closed
+                if (!this.settingsModal.classList.contains('open') &&
+                    !this.presetsModal.classList.contains('open') &&
+                    !this.nameModal.classList.contains('open')) {
+                    this.settingsOverlay.classList.remove('open');
+                }
+                this.deleteModalCallback = null;
+            }
+
+            confirmDeleteModal() {
+                if (this.deleteModalCallback) {
+                    this.deleteModalCallback();
+                }
+                this.hideDeleteModal();
+            }
+
+            // New Metronome functionality
+            newMetronome() {
+                // Check if there are unsaved changes
+                if (this.isModified || (!this.currentPresetName && this.hasNonDefaultSettings())) {
+                    this.showSaveConfirmModal(() => {
+                        // Yes - save first, then reset
+                        this.savePreset();
+                        setTimeout(() => this.resetToDefaults(), 300);
+                    }, () => {
+                        // No - just reset
+                        this.resetToDefaults();
+                    });
+                } else {
+                    // No changes, just reset
+                    this.resetToDefaults();
+                }
+            }
+
+            hasNonDefaultSettings() {
+                // Check if current settings differ from defaults
+                return this.tempo !== 120 ||
+                       this.volume !== 0.7 ||
+                       this.startingBeats !== 4 ||
+                       this.totalBeats !== 0 ||
+                       this.timeSigNumerator !== 4 ||
+                       this.timeSigDenominator !== 4 ||
+                       this.soundType !== 'beep';
+            }
+
+            resetToDefaults() {
+                // Stop if playing
+                if (this.isPlaying) {
+                    this.stop();
+                }
+
+                // Reset to defaults
+                this.tempo = 120;
+                this.volume = 0.7;
+                this.startingBeats = 4;
+                this.totalBeats = 0;
+                this.timeSigNumerator = 4;
+                this.timeSigDenominator = 4;
+                this.accentPattern = [true, false, false, false];
+                this.soundType = 'beep';
+
+                // Reset preset state
+                this.currentPresetId = null;
+                this.currentPresetName = null;
+                this.isModified = false;
+
+                // Update UI
+                this.updateTempoDisplay();
+                this.volumeSlider.value = Math.round(this.volume * 100);
+                this.volumeDisplay.textContent = Math.round(this.volume * 100);
+                this.startingBeatsInput.value = this.startingBeats;
+                this.totalBeatsInput.value = this.totalBeats;
+                this.timeSigNumeratorInput.value = this.timeSigNumerator;
+                this.timeSigDenominatorInput.value = this.timeSigDenominator;
+                this.soundTypeSelect.value = this.soundType;
+                this.updateAccentGrid();
+                this.updatePresetNameDisplay();
+                this.saveSettings();
+            }
+
+            showSaveConfirmModal(onYes, onNo) {
+                this.saveConfirmCallback = { onYes, onNo };
+                this.saveConfirmModal.classList.add('open');
+                this.settingsOverlay.classList.add('open');
+            }
+
+            hideSaveConfirmModal() {
+                this.saveConfirmModal.classList.remove('open');
+                if (!this.settingsModal.classList.contains('open') &&
+                    !this.presetsModal.classList.contains('open') &&
+                    !this.nameModal.classList.contains('open') &&
+                    !this.deleteModal.classList.contains('open') &&
+                    !this.infoModal.classList.contains('open')) {
+                    this.settingsOverlay.classList.remove('open');
+                }
+                this.saveConfirmCallback = null;
+            }
+
+            confirmSaveConfirmYes() {
+                if (this.saveConfirmCallback && this.saveConfirmCallback.onYes) {
+                    this.saveConfirmCallback.onYes();
+                }
+                this.hideSaveConfirmModal();
+            }
+
+            confirmSaveConfirmNo() {
+                if (this.saveConfirmCallback && this.saveConfirmCallback.onNo) {
+                    this.saveConfirmCallback.onNo();
+                }
+                this.hideSaveConfirmModal();
+            }
+
+            showInfoModal() {
+                this.infoModal.classList.add('open');
+                this.settingsOverlay.classList.add('open');
+            }
+
+            hideInfoModal() {
+                this.infoModal.classList.remove('open');
+                if (!this.settingsModal.classList.contains('open') &&
+                    !this.presetsModal.classList.contains('open') &&
+                    !this.nameModal.classList.contains('open') &&
+                    !this.deleteModal.classList.contains('open') &&
+                    !this.saveConfirmModal.classList.contains('open')) {
+                    this.settingsOverlay.classList.remove('open');
+                }
+            }
+
+            async exportToWAV() {
+                const totalBeatsToExport = this.totalBeats === 0 ? 400 : this.totalBeats;
+                const countInBeats = this.startingBeats;
+                const totalBeats = countInBeats + totalBeatsToExport;
+                const secondsPerBeat = 60.0 / this.tempo;
+                const totalDuration = totalBeats * secondsPerBeat + 1; // Add 1 second buffer
+
+                // Disable export button during export
+                this.exportBtn.disabled = true;
+                this.exportBtn.textContent = 'Exporting...';
+
+                try {
+                    // Create offline audio context
+                    const sampleRate = 44100;
+                    const offlineContext = new OfflineAudioContext(1, totalDuration * sampleRate, sampleRate);
+
+                    // Generate audio buffers for offline context
+                    const offlineBuffers = await this.generateSoundBuffersForContext(offlineContext);
+
+                    // Schedule all beats
+                    let currentTime = 0;
+                    for (let i = 0; i < totalBeats; i++) {
+                        const isCountIn = i < countInBeats;
+                        const beatNumber = isCountIn ? i : i - countInBeats;
+
+                        this.scheduleOfflineBeat(offlineContext, offlineBuffers, currentTime, isCountIn, beatNumber);
+                        currentTime += secondsPerBeat;
+                    }
+
+                    // Render the audio
+                    const renderedBuffer = await offlineContext.startRendering();
+
+                    // Convert to WAV and download
+                    const wavBlob = this.audioBufferToWav(renderedBuffer);
+                    const url = URL.createObjectURL(wavBlob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    const presetName = this.currentPresetName || 'metronome';
+                    a.download = `${presetName}_${this.tempo}bpm.wav`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+
+                    // Re-enable export button
+                    this.exportBtn.disabled = false;
+                    this.exportBtn.textContent = 'Export as WAV';
+                } catch (error) {
+                    console.error('Export failed:', error);
+                    alert('Export failed. Please try again.');
+                    this.exportBtn.disabled = false;
+                    this.exportBtn.textContent = 'Export as WAV';
+                }
+            }
+
+            async generateSoundBuffersForContext(context) {
+                const sampleRate = context.sampleRate;
+                const buffers = {};
+
+                // Create beep sound
+                const beepLength = Math.floor(sampleRate * 0.05);
+                const beepBuffer = context.createBuffer(1, beepLength, sampleRate);
+                const beepData = beepBuffer.getChannelData(0);
+                for (let i = 0; i < beepLength; i++) {
+                    const t = i / sampleRate;
+                    const envelope = Math.exp(-t * 15);
+                    beepData[i] = Math.sin(2 * Math.PI * 1000 * t) * envelope * 0.3;
+                }
+                buffers.beep = beepBuffer;
+
+                // Create click sound
+                const clickLength = Math.floor(sampleRate * 0.03);
+                const clickBuffer = context.createBuffer(1, clickLength, sampleRate);
+                const clickData = clickBuffer.getChannelData(0);
+                for (let i = 0; i < clickLength; i++) {
+                    const t = i / sampleRate;
+                    const envelope = Math.exp(-t * 40);
+                    clickData[i] = Math.sin(2 * Math.PI * 1200 * t) * envelope * 0.4;
+                }
+                buffers.click = clickBuffer;
+
+                // Create woodblock sound
+                const woodLength = Math.floor(sampleRate * 0.04);
+                const woodBuffer = context.createBuffer(1, woodLength, sampleRate);
+                const woodData = woodBuffer.getChannelData(0);
+                for (let i = 0; i < woodLength; i++) {
+                    const t = i / sampleRate;
+                    const envelope = Math.exp(-t * 25);
+                    const fundamental = Math.sin(2 * Math.PI * 700 * t);
+                    const harmonic = Math.sin(2 * Math.PI * 1400 * t) * 0.3;
+                    woodData[i] = (fundamental + harmonic) * envelope * 0.35;
+                }
+                buffers.woodblock = woodBuffer;
+
+                return buffers;
+            }
+
+            scheduleOfflineBeat(context, buffers, time, isCountIn, beatNumber) {
+                const source = context.createBufferSource();
+                const gainNode = context.createGain();
+
+                const beatsPerMeasure = this.getBeatsPerMeasure();
+                const beatInMeasure = beatNumber % beatsPerMeasure;
+                const isAccented = !isCountIn && this.accentPattern[beatInMeasure];
+
+                source.buffer = buffers[this.soundType] || buffers.beep;
+
+                if (isCountIn) {
+                    source.playbackRate.value = 0.9;
+                } else if (isAccented) {
+                    source.playbackRate.value = 1.2;
+                } else {
+                    source.playbackRate.value = 1.0;
+                }
+
+                source.connect(gainNode);
+                gainNode.connect(context.destination);
+
+                const volumeMultiplier = isAccented ? 1.4 : 1.0;
+                gainNode.gain.value = this.volume * volumeMultiplier;
+
+                source.start(time);
+            }
+
+            audioBufferToWav(buffer) {
+                const numberOfChannels = buffer.numberOfChannels;
+                const sampleRate = buffer.sampleRate;
+                const format = 1; // PCM
+                const bitDepth = 16;
+
+                const bytesPerSample = bitDepth / 8;
+                const blockAlign = numberOfChannels * bytesPerSample;
+
+                const data = buffer.getChannelData(0);
+                const dataLength = data.length * bytesPerSample;
+                const bufferLength = 44 + dataLength;
+
+                const arrayBuffer = new ArrayBuffer(bufferLength);
+                const view = new DataView(arrayBuffer);
+
+                // Write WAV header
+                const writeString = (offset, string) => {
+                    for (let i = 0; i < string.length; i++) {
+                        view.setUint8(offset + i, string.charCodeAt(i));
+                    }
+                };
+
+                writeString(0, 'RIFF');
+                view.setUint32(4, bufferLength - 8, true);
+                writeString(8, 'WAVE');
+                writeString(12, 'fmt ');
+                view.setUint32(16, 16, true); // fmt chunk size
+                view.setUint16(20, format, true);
+                view.setUint16(22, numberOfChannels, true);
+                view.setUint32(24, sampleRate, true);
+                view.setUint32(28, sampleRate * blockAlign, true);
+                view.setUint16(32, blockAlign, true);
+                view.setUint16(34, bitDepth, true);
+                writeString(36, 'data');
+                view.setUint32(40, dataLength, true);
+
+                // Write audio data
+                let offset = 44;
+                for (let i = 0; i < data.length; i++) {
+                    const sample = Math.max(-1, Math.min(1, data[i]));
+                    const intSample = sample < 0 ? sample * 0x8000 : sample * 0x7FFF;
+                    view.setInt16(offset, intSample, true);
+                    offset += 2;
+                }
+
+                return new Blob([arrayBuffer], { type: 'audio/wav' });
+            }
+
+            attachDragListeners() {
+                const items = this.presetsList.querySelectorAll('.preset-item');
+                let draggedElement = null;
+
+                items.forEach(item => {
+                    item.addEventListener('dragstart', (e) => {
+                        draggedElement = item;
+                        item.classList.add('dragging');
+                        e.dataTransfer.effectAllowed = 'move';
+                    });
+
+                    item.addEventListener('dragend', (e) => {
+                        item.classList.remove('dragging');
+                        draggedElement = null;
+                    });
+
+                    item.addEventListener('dragover', (e) => {
+                        e.preventDefault();
+                        e.dataTransfer.dropEffect = 'move';
+
+                        if (draggedElement && draggedElement !== item) {
+                            const allItems = [...this.presetsList.querySelectorAll('.preset-item')];
+                            const draggedIndex = allItems.indexOf(draggedElement);
+                            const targetIndex = allItems.indexOf(item);
+
+                            if (draggedIndex < targetIndex) {
+                                item.parentNode.insertBefore(draggedElement, item.nextSibling);
+                            } else {
+                                item.parentNode.insertBefore(draggedElement, item);
+                            }
+                        }
+                    });
+
+                    item.addEventListener('drop', (e) => {
+                        e.preventDefault();
+
+                        // Reorder the presets array based on new DOM order
+                        const newOrder = [];
+                        const allItems = [...this.presetsList.querySelectorAll('.preset-item')];
+                        allItems.forEach(elem => {
+                            const presetId = elem.dataset.presetId;
+                            const preset = this.presets.find(p => p.id === presetId);
+                            if (preset) {
+                                newOrder.push(preset);
+                            }
+                        });
+
+                        this.presets = newOrder;
+                        this.savePresetsToStorage();
+                    });
+                });
+            }
+
+            updateAccentGrid() {
+                const beats = this.timeSigNumerator;
+                this.accentGrid.innerHTML = '';
+
+                // Resize accent pattern if needed
+                if (this.accentPattern.length !== beats) {
+                    this.accentPattern = Array(beats).fill(false);
+                    this.accentPattern[0] = true; // Accent first beat by default
+                }
+
+                // Create beat buttons
+                for (let i = 0; i < beats; i++) {
+                    const beatBtn = document.createElement('div');
+                    beatBtn.className = 'accent-beat';
+                    if (this.accentPattern[i]) {
+                        beatBtn.classList.add('active');
+                    }
+                    beatBtn.textContent = i + 1;
+                    beatBtn.addEventListener('click', () => {
+                        this.accentPattern[i] = !this.accentPattern[i];
+                        beatBtn.classList.toggle('active');
+                        this.updateBeatPreview();
+                        this.saveSettings();
+                        this.markAsModified();
+                    });
+                    this.accentGrid.appendChild(beatBtn);
+                }
+
+                // Update the beat preview when accent grid changes
+                this.updateBeatPreview();
+            }
+
+            updateBeatPreview() {
+                this.beatPreview.innerHTML = '';
+
+                // Determine note symbol based on denominator
+                let noteSymbol;
+                switch (this.timeSigDenominator) {
+                    case 1:
+                        noteSymbol = '𝅝'; // Whole note
+                        break;
+                    case 2:
+                        noteSymbol = '𝅗𝅥'; // Half note
+                        break;
+                    case 4:
+                        noteSymbol = '♩'; // Quarter note
+                        break;
+                    case 8:
+                        noteSymbol = '♪'; // Eighth note
+                        break;
+                    case 16:
+                        noteSymbol = '♬'; // Sixteenth note (beamed eighth)
+                        break;
+                    default:
+                        noteSymbol = '♩'; // Default to quarter note
+                        break;
+                }
+
+                // Create beat notes with accent marks
+                for (let i = 0; i < this.timeSigNumerator; i++) {
+                    const beatNote = document.createElement('div');
+                    beatNote.className = 'beat-note';
+
+                    // Accent mark (shows above the note)
+                    const accentMark = document.createElement('div');
+                    accentMark.className = 'accent-mark';
+                    accentMark.textContent = this.accentPattern[i] ? '>' : '';
+
+                    // Note symbol
+                    const noteElem = document.createElement('div');
+                    noteElem.className = 'note-symbol';
+                    noteElem.textContent = noteSymbol;
+
+                    // Beat number (below the note)
+                    const beatNum = document.createElement('div');
+                    beatNum.className = 'beat-number';
+                    beatNum.textContent = i + 1;
+
+                    beatNote.appendChild(accentMark);
+                    beatNote.appendChild(noteElem);
+                    beatNote.appendChild(beatNum);
+                    this.beatPreview.appendChild(beatNote);
+                }
+            }
+
+            getBeatsPerMeasure() {
+                return this.timeSigNumerator;
+            }
+
+            attachEventListeners() {
+                const increaseBtn = document.getElementById('increaseTempo');
+                const decreaseBtn = document.getElementById('decreaseTempo');
+
+                // Increase tempo button with long press
+                this.setupLongPress(increaseBtn, () => this.changeTempo(1));
+
+                // Decrease tempo button with long press
+                this.setupLongPress(decreaseBtn, () => this.changeTempo(-1));
+
+                // Manual tempo input
+                this.tempoDisplay.addEventListener('input', (e) => {
+                    const value = parseInt(e.target.value);
+                    if (!isNaN(value) && value >= 30 && value <= 300) {
+                        this.tempo = value;
+                        this.saveSettings();
+                        this.markAsModified();
+                    }
+                });
+
+                this.tempoDisplay.addEventListener('blur', (e) => {
+                    // Validate and correct on blur
+                    let value = parseInt(e.target.value);
+                    if (isNaN(value) || value < 30) {
+                        value = 30;
+                    } else if (value > 300) {
+                        value = 300;
+                    }
+                    this.tempo = value;
+                    this.updateTempoDisplay();
+                    this.saveSettings();
+                    this.markAsModified();
+                });
+
+                this.startPauseBtn.addEventListener('click', () => this.toggleStartPause());
+                this.stopBtn.addEventListener('click', () => this.stop());
+
+                this.volumeSlider.addEventListener('input', (e) => {
+                    this.volume = e.target.value / 100;
+                    this.volumeDisplay.textContent = e.target.value;
+                    this.saveSettings();
+                    this.markAsModified();
+                });
+
+                this.startingBeatsInput.addEventListener('change', (e) => {
+                    this.startingBeats = parseInt(e.target.value) || 0;
+                    this.saveSettings();
+                    this.markAsModified();
+                });
+
+                this.totalBeatsInput.addEventListener('change', (e) => {
+                    this.totalBeats = parseInt(e.target.value) || 0;
+                    this.saveSettings();
+                    this.markAsModified();
+                });
+
+                // Theme toggle
+                this.themeToggle.addEventListener('click', () => this.toggleTheme());
+
+                // Settings modal
+                this.settingsToggle.addEventListener('click', () => this.openSettings());
+                this.settingsClose.addEventListener('click', () => this.closeSettings());
+                this.settingsOverlay.addEventListener('click', () => {
+                    this.closeSettings();
+                    this.closePresetsModal();
+                });
+
+                // Presets
+                this.savePresetBtn.addEventListener('click', () => this.savePreset());
+                this.presetsListBtn.addEventListener('click', () => this.openPresetsModal());
+                this.presetsClose.addEventListener('click', () => this.closePresetsModal());
+
+                // Click on preset name to rename
+                this.presetNameDisplay.addEventListener('click', () => {
+                    if (this.currentPresetId) {
+                        this.renamePreset(this.currentPresetId);
+                    }
+                });
+                this.presetNameDisplay.style.cursor = 'pointer';
+
+                // Name modal
+                this.nameModalCancel.addEventListener('click', () => this.hideNameModal());
+                this.nameModalConfirm.addEventListener('click', () => this.confirmNameModal());
+                this.nameModalInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        this.confirmNameModal();
+                    } else if (e.key === 'Escape') {
+                        e.preventDefault();
+                        this.hideNameModal();
+                    }
+                });
+
+                // Delete modal
+                this.deleteModalCancel.addEventListener('click', () => this.hideDeleteModal());
+                this.deleteModalConfirm.addEventListener('click', () => this.confirmDeleteModal());
+
+                // New metronome button
+                this.newMetronomeBtn.addEventListener('click', () => this.newMetronome());
+
+                // Save confirmation modal
+                this.saveConfirmYes.addEventListener('click', () => this.confirmSaveConfirmYes());
+                this.saveConfirmNo.addEventListener('click', () => this.confirmSaveConfirmNo());
+
+                // Info button and modal
+                this.infoBtn.addEventListener('click', () => this.showInfoModal());
+                this.infoModalClose.addEventListener('click', () => this.hideInfoModal());
+
+                // Advanced settings - time signature
+                this.timeSigNumeratorInput.addEventListener('change', (e) => {
+                    const value = parseInt(e.target.value);
+                    if (value >= 1 && value <= 32) {
+                        this.timeSigNumerator = value;
+                        this.updateAccentGrid();
+                        this.saveSettings();
+                        this.markAsModified();
+                    } else {
+                        e.target.value = this.timeSigNumerator;
+                    }
+                });
+
+                this.timeSigDenominatorInput.addEventListener('change', (e) => {
+                    const value = parseInt(e.target.value);
+                    if (value >= 1 && value <= 16) {
+                        this.timeSigDenominator = value;
+                        this.updateBeatPreview();
+                        this.saveSettings();
+                        this.markAsModified();
+                    } else {
+                        e.target.value = this.timeSigDenominator;
+                    }
+                });
+
+                this.soundTypeSelect.addEventListener('change', (e) => {
+                    this.soundType = e.target.value;
+                    this.saveSettings();
+                    this.markAsModified();
+                });
+
+                // Export button
+                this.exportBtn.addEventListener('click', () => this.exportToWAV());
+            }
+
+            setupLongPress(button, callback) {
+                let pressTimer = null;
+                let holdStartTime = 0;
+
+                const startPress = (e) => {
+                    e.preventDefault();
+                    holdStartTime = Date.now();
+
+                    // First click - immediate
+                    callback();
+
+                    // Start repeating after initial delay
+                    pressTimer = setTimeout(() => {
+                        this.repeatAction(callback, holdStartTime);
+                    }, 300);
+                };
+
+                const endPress = () => {
+                    if (pressTimer) {
+                        clearTimeout(pressTimer);
+                        pressTimer = null;
+                    }
+                    if (this.tempoChangeTimer) {
+                        clearTimeout(this.tempoChangeTimer);
+                        this.tempoChangeTimer = null;
+                    }
+                };
+
+                // Mouse events
+                button.addEventListener('mousedown', startPress);
+                button.addEventListener('mouseup', endPress);
+                button.addEventListener('mouseleave', endPress);
+
+                // Touch events for mobile
+                button.addEventListener('touchstart', startPress);
+                button.addEventListener('touchend', endPress);
+                button.addEventListener('touchcancel', endPress);
+            }
+
+            repeatAction(callback, startTime) {
+                callback();
+
+                // Calculate how long the button has been held
+                const holdDuration = Date.now() - startTime;
+
+                // Accelerate over time: start at 150ms, minimum 30ms
+                let interval = Math.max(30, 150 - (holdDuration / 20));
+
+                this.tempoChangeTimer = setTimeout(() => {
+                    this.repeatAction(callback, startTime);
+                }, interval);
+            }
+
+            changeTempo(delta) {
+                const newTempo = this.tempo + delta;
+                if (newTempo >= 30 && newTempo <= 300) {
+                    this.tempo = newTempo;
+                    this.updateTempoDisplay();
+                    this.saveSettings();
+                    this.markAsModified();
+                }
+            }
+
+            updateTempoDisplay() {
+                this.tempoDisplay.value = this.tempo;
+            }
+
+            playClick(time, isCountIn = false, beatNumber = 0) {
+                if (!this.audioLoaded) return; // Wait for audio buffers to load
+
+                // Create buffer source and gain node
+                const source = this.audioContext.createBufferSource();
+                const gainNode = this.audioContext.createGain();
+
+                // Determine if this beat should be accented
+                const beatsPerMeasure = this.getBeatsPerMeasure();
+                const beatInMeasure = beatNumber % beatsPerMeasure;
+                const isAccented = !isCountIn && this.accentPattern[beatInMeasure];
+
+                // Select the appropriate audio buffer
+                source.buffer = this.audioBuffers[this.soundType] || this.audioBuffers.beep;
+
+                // Apply pitch shift for count-in and accented beats
+                if (isCountIn) {
+                    source.playbackRate.value = 0.9; // Slightly lower pitch for count-in
+                } else if (isAccented) {
+                    source.playbackRate.value = 1.2; // Higher pitch for accented beats
+                } else {
+                    source.playbackRate.value = 1.0; // Normal pitch
+                }
+
+                // Connect audio graph
+                source.connect(gainNode);
+                gainNode.connect(this.audioContext.destination);
+
+                // Accented beats are slightly louder
+                const volumeMultiplier = isAccented ? 1.4 : 1.0;
+                gainNode.gain.value = this.volume * volumeMultiplier;
+
+                // Play the sound
+                source.start(time);
+            }
+
+            nextNote() {
+                const secondsPerBeat = 60.0 / this.tempo;
+                this.nextNoteTime += secondsPerBeat;
+            }
+
+            scheduleNote(beatNumber, time) {
+                this.playClick(time, this.isCountIn, beatNumber);
+
+                // Update UI on main thread
+                const beatText = this.isCountIn
+                    ? `Count-in: ${beatNumber + 1}/${this.startingBeats}`
+                    : this.totalBeats > 0
+                        ? `Beat: ${beatNumber + 1}/${this.totalBeats}`
+                        : `Beat: ${beatNumber + 1}`;
+
+                setTimeout(() => {
+                    this.beatIndicator.textContent = beatText;
+                    this.beatIndicator.classList.add('active');
+                    setTimeout(() => this.beatIndicator.classList.remove('active'), 100);
+                }, (time - this.audioContext.currentTime) * 1000);
+            }
+
+            scheduler() {
+                while (this.nextNoteTime < this.audioContext.currentTime + this.scheduleAheadTime) {
+                    this.scheduleNote(this.currentBeat, this.nextNoteTime);
+                    this.nextNote();
+                    this.currentBeat++;
+
+                    // Check if we need to transition from count-in to regular beats
+                    if (this.isCountIn && this.currentBeat >= this.startingBeats) {
+                        this.isCountIn = false;
+                        this.currentBeat = 0;
+                    }
+                    // Check if we've reached the total beats limit
+                    else if (!this.isCountIn && this.totalBeats > 0 && this.currentBeat >= this.totalBeats) {
+                        this.stop();
+                        return;
+                    }
+                }
+            }
+
+            start() {
+                if (this.isPlaying) return;
+
+                this.isPlaying = true;
+                this.isPaused = false;
+                this.currentBeat = 0;
+                this.isCountIn = this.startingBeats > 0;
+                this.nextNoteTime = this.audioContext.currentTime;
+
+                this.startPauseBtn.textContent = 'PAUSE';
+                this.startPauseBtn.classList.remove('paused');
+                this.stopBtn.disabled = false;
+
+                this.schedulerTimer = setInterval(() => this.scheduler(), this.lookahead);
+            }
+
+            pause() {
+                if (!this.isPlaying || this.isPaused) return;
+
+                this.isPaused = true;
+                clearInterval(this.schedulerTimer);
+
+                this.startPauseBtn.textContent = 'RESUME';
+                this.startPauseBtn.classList.add('paused');
+
+                // Show beat position when paused
+                // currentBeat represents the NEXT beat to be scheduled, so subtract 1 for the last played beat
+                const lastPlayedBeat = this.currentBeat > 0 ? this.currentBeat - 1 : 0;
+
+                const beatText = this.isCountIn
+                    ? `Paused at count-in: ${lastPlayedBeat + 1}/${this.startingBeats}`
+                    : this.totalBeats > 0
+                        ? `Paused at beat: ${lastPlayedBeat + 1}/${this.totalBeats}`
+                        : `Paused at beat: ${lastPlayedBeat + 1}`;
+
+                this.beatIndicator.textContent = beatText;
+            }
+
+            resume() {
+                if (!this.isPlaying || !this.isPaused) return;
+
+                this.isPaused = false;
+                this.nextNoteTime = this.audioContext.currentTime;
+
+                this.startPauseBtn.textContent = 'PAUSE';
+                this.startPauseBtn.classList.remove('paused');
+
+                this.schedulerTimer = setInterval(() => this.scheduler(), this.lookahead);
+            }
+
+            stop() {
+                if (!this.isPlaying) return;
+
+                this.isPlaying = false;
+                this.isPaused = false;
+                clearInterval(this.schedulerTimer);
+
+                this.startPauseBtn.textContent = 'START';
+                this.startPauseBtn.classList.remove('paused');
+                this.stopBtn.disabled = true;
+                this.beatIndicator.textContent = 'Ready to start';
+                this.beatIndicator.classList.remove('active');
+            }
+
+            toggleStartPause() {
+                if (!this.isPlaying) {
+                    this.start();
+                } else if (this.isPaused) {
+                    this.resume();
+                } else {
+                    this.pause();
+                }
+            }
+        }
+
+        // Initialize the metronome when the page loads
+        const metronome = new Metronome();
+
+        // PWA Update Management
+        let newWorker;
+
+        function showUpdateBanner() {
+            const banner = document.getElementById('updateBanner');
+            const updateBtn = document.getElementById('updateBtn');
+
+            banner.classList.add('show');
+
+            updateBtn.addEventListener('click', () => {
+                if (newWorker) {
+                    newWorker.postMessage({ action: 'skipWaiting' });
+                }
+            });
+        }
+
+        // Register service worker for PWA functionality
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then((registration) => {
+                        console.log('Service Worker registered successfully:', registration.scope);
+
+                        // Check for updates immediately on load
+                        registration.update();
+
+                        // Check for updates every time the app is focused (opened)
+                        window.addEventListener('focus', () => {
+                            registration.update();
+                        });
+
+                        // Check for updates
+                        registration.addEventListener('updatefound', () => {
+                            newWorker = registration.installing;
+
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    // New service worker available
+                                    showUpdateBanner();
+                                }
+                            });
+                        });
+                    })
+                    .catch((error) => {
+                        console.log('Service Worker registration failed:', error);
+                    });
+
+                // Handle service worker updates
+                let refreshing;
+                navigator.serviceWorker.addEventListener('controllerchange', () => {
+                    if (refreshing) return;
+                    refreshing = true;
+                    window.location.reload();
+                });
+            });
+        }
+    </script>
+</body>
+</html>
