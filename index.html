@@ -2636,13 +2636,14 @@
                 // Handle voice sound type
                 if (this.soundType === 'voice' && this.speech) {
                     const delay = (time - this.audioContext.currentTime) * 1000; // Convert to ms
+                    const compensatedDelay = Math.max(0, delay - 80); // Compensate for speech synthesis latency
                     setTimeout(() => {
                         const utterance = new SpeechSynthesisUtterance((beatInMeasure + 1).toString());
-                        utterance.rate = 1.5; // Speak faster
+                        utterance.rate = 2.0; // Speak faster for better rhythm
                         utterance.pitch = isAccented ? 1.3 : 1.0; // Higher pitch for accents
                         utterance.volume = this.volume * (isAccented ? 1.4 : 1.0);
                         this.speech.speak(utterance);
-                    }, delay > 0 ? delay : 0);
+                    }, compensatedDelay);
                     return;
                 }
 
