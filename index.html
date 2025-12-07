@@ -1405,6 +1405,7 @@
                 <button class="tempo-btn" id="decreaseTempo" title="Decrease tempo">−</button>
                 <input type="number" class="tempo-display" id="tempoDisplay" value="120" min="30" max="300" title="Enter tempo manually">
                 <button class="tempo-btn" id="increaseTempo" title="Increase tempo">+</button>
+                <button class="tempo-btn tap-btn" id="tapTempo" title="Tap to set tempo">Tap</button>
             </div>
         </div>
 
@@ -1470,6 +1471,10 @@
                 this.currentPresetName = null;
                 this.isModified = false;
                 this.nameModalCallback = null;
+
+                // Tap tempo
+                this.tapTimes = [];
+                this.tapTimeout = null;
 
                 this.initElements();
                 this.initAudio();
@@ -2453,6 +2458,10 @@
                     this.markAsModified();
                 });
 
+                // Tap tempo button
+                const tapTempoBtn = document.getElementById('tapTempo');
+                tapTempoBtn.addEventListener('click', () => this.handleTapTempo());
+
                 this.startPauseBtn.addEventListener('click', () => this.toggleStartPause());
                 this.stopBtn.addEventListener('click', () => this.stop());
 
@@ -2650,6 +2659,52 @@
                     this.saveSettings();
                     this.markAsModified();
                 }
+            }
+
+            handleTapTempo() {
+                const now = Date.now();
+
+                // Clear existing timeout
+                if (this.tapTimeout) {
+                    clearTimeout(this.tapTimeout);
+                }
+
+                // Add current tap time
+                this.tapTimes.push(now);
+
+                // Keep only recent taps (last 8 taps)
+                if (this.tapTimes.length > 8) {
+                    this.tapTimes.shift();
+                }
+
+                // Need at least 2 taps to calculate tempo
+                if (this.tapTimes.length >= 2) {
+                    // Calculate intervals between taps
+                    const intervals = [];
+                    for (let i = 1; i < this.tapTimes.length; i++) {
+                        intervals.push(this.tapTimes[i] - this.tapTimes[i - 1]);
+                    }
+
+                    // Calculate average interval
+                    const avgInterval = intervals.reduce((a, b) => a + b, 0) / intervals.length;
+
+                    // Convert to BPM (60000 ms per minute)
+                    let bpm = Math.round(60000 / avgInterval);
+
+                    // Clamp to valid range
+                    bpm = Math.max(30, Math.min(300, bpm));
+
+                    // Update tempo
+                    this.tempo = bpm;
+                    this.updateTempoDisplay();
+                    this.saveSettings();
+                    this.markAsModified();
+                }
+
+                // Reset tap times after 3 seconds of inactivity
+                this.tapTimeout = setTimeout(() => {
+                    this.tapTimes = [];
+                }, 3000);
             }
 
             updateTempoDisplay() {
