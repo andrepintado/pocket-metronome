@@ -1229,7 +1229,7 @@
         "Adjustable tempo (20-300 BPM)",
         "Multiple metronome sounds (Beep, Click, Woodblock)",
         "Accent pattern customization",
-        "Save and load presets",
+        "Save and load metronomes",
         "Dark mode support",
         "Works offline (PWA)",
         "Export audio to WAV",
@@ -1668,7 +1668,7 @@
 
                 // If no current preset name, show modal to get one
                 if (!this.currentPresetName) {
-                    this.showNameModal('Enter preset name', '', (presetName) => {
+                    this.showNameModal('Enter metronome name', '', (presetName) => {
                         this.performSavePreset(presetName, settings);
                     });
                 } else {
@@ -1726,7 +1726,7 @@
                 const preset = this.presets.find(p => p.id === presetId);
                 if (!preset) return;
 
-                this.showNameModal('Rename preset', preset.name, (newName) => {
+                this.showNameModal('Rename metronome', preset.name, (newName) => {
                     preset.name = newName;
 
                     // If this is the current preset, update the display
@@ -1836,7 +1836,7 @@
                     const editBtn = document.createElement('button');
                     editBtn.className = 'duplicate-btn';
                     editBtn.textContent = '✏️';
-                    editBtn.title = 'Rename preset';
+                    editBtn.title = 'Rename metronome';
                     editBtn.addEventListener('click', (e) => {
                         e.stopPropagation();
                         this.renamePreset(preset.id);
@@ -1846,7 +1846,7 @@
                     const duplicateBtn = document.createElement('button');
                     duplicateBtn.className = 'duplicate-btn';
                     duplicateBtn.textContent = '⎘';
-                    duplicateBtn.title = 'Duplicate preset';
+                    duplicateBtn.title = 'Duplicate metronome';
                     duplicateBtn.addEventListener('click', (e) => {
                         e.stopPropagation();
                         this.duplicatePreset(preset.id);
@@ -1856,7 +1856,7 @@
                     const deleteBtn = document.createElement('button');
                     deleteBtn.className = 'delete-btn';
                     deleteBtn.textContent = '🗑️';
-                    deleteBtn.title = 'Delete preset';
+                    deleteBtn.title = 'Delete metronome';
                     deleteBtn.addEventListener('click', (e) => {
                         e.stopPropagation();
                         this.deletePreset(preset.id);
