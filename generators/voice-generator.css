@@ -215,6 +215,71 @@ input[type="range"]::-moz-range-thumb:hover {
     margin-bottom: 0;
 }
 
+.file-list {
+    background: #e3f2fd;
+    border: 2px solid #2196f3;
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 25px;
+}
+
+.file-list h3 {
+    color: #1565c0;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.files-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.file-item {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    border: 2px solid #ddd;
+    text-align: center;
+    transition: all 0.2s;
+}
+
+.file-item:hover {
+    border-color: #667eea;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+}
+
+.file-number {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #667eea;
+    margin-bottom: 8px;
+}
+
+.file-name {
+    font-size: 0.85em;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.file-download {
+    width: 100%;
+    padding: 8px;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.85em;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.file-download:hover {
+    background: #5568d3;
+}
+
 .hidden {
     display: none;
 }

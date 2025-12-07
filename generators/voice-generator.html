@@ -42,7 +42,8 @@
 
         <div class="actions">
             <button id="previewBtn" class="btn btn-secondary">Preview "1"</button>
-            <button id="playAllBtn" class="btn btn-primary">Play All Numbers (Preview)</button>
+            <button id="playAllBtn" class="btn btn-secondary">Play All Numbers (Preview)</button>
+            <button id="recordExportBtn" class="btn btn-primary">🎙️ Record & Export All</button>
         </div>
 
         <div id="progress" class="progress hidden">
@@ -63,6 +64,12 @@
             <button id="copySettingsBtn" class="btn btn-secondary">Copy Settings to Clipboard</button>
         </div>
 
+        <div id="fileList" class="file-list hidden">
+            <h3>🎉 Generated Files Ready!</h3>
+            <div id="files" class="files-grid"></div>
+            <button id="downloadAllBtn" class="btn btn-primary">Download All Files</button>
+        </div>
+
         <div class="instructions">
             <h3>How to Generate Voice Files:</h3>
             <ol>
@@ -74,32 +81,25 @@
                         <li>Click "Play All Numbers" to hear the full sequence</li>
                     </ul>
                 </li>
-                <li><strong>Option A - Manual Recording (Free):</strong>
+                <li><strong>🎙️ Record & Export (Recommended):</strong>
                     <ul>
-                        <li>Use audio recording software (e.g., Audacity, QuickTime, Windows Voice Recorder)</li>
-                        <li>Start recording and click "Play All Numbers"</li>
-                        <li>Split the recording into individual files (1.wav, 2.wav, etc.)</li>
-                        <li>Save as WAV or MP3 format</li>
+                        <li>Click "Record & Export All" button</li>
+                        <li>Grant permission to capture tab audio (browser popup)</li>
+                        <li>Select this browser tab when prompted</li>
+                        <li>The tool will automatically record each number</li>
+                        <li>Download all files individually or together</li>
+                        <li>Files are saved as WebM format (works with Web Audio API)</li>
                     </ul>
                 </li>
-                <li><strong>Option B - TTS Services (Best Quality):</strong>
+                <li><strong>Alternative - TTS Services (Best Quality):</strong>
                     <ul>
                         <li><strong>Google Cloud TTS:</strong> <a href="https://cloud.google.com/text-to-speech" target="_blank">cloud.google.com/text-to-speech</a></li>
                         <li><strong>Amazon Polly:</strong> <a href="https://aws.amazon.com/polly" target="_blank">aws.amazon.com/polly</a></li>
                         <li><strong>ElevenLabs:</strong> <a href="https://elevenlabs.io" target="_blank">elevenlabs.io</a> (Very natural voices)</li>
-                        <li>Generate files "1", "2", "3", etc. up to your max number</li>
-                        <li>Download as WAV files for best quality</li>
-                    </ul>
-                </li>
-                <li><strong>Use the Files:</strong>
-                    <ul>
-                        <li>Name files as: 1.wav, 2.wav, 3.wav, etc.</li>
-                        <li>Upload to your metronome project</li>
-                        <li>Update the metronome code to load and play voice samples</li>
                     </ul>
                 </li>
             </ol>
-            <p><strong>Why can't this tool generate files directly?</strong> Browser security restrictions prevent direct recording of Speech Synthesis API output. However, this tool helps you find the perfect voice settings before recording!</p>
+            <p><strong>Note:</strong> The recording feature captures tab audio using the MediaRecorder API. You'll need to grant permission once, then the tool handles everything automatically!</p>
         </div>
     </div>
 
