@@ -26,6 +26,7 @@
         'display_mode': isPWA ? 'standalone' : 'browser'
       });
     </script>
+    <script src="/version.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -1398,9 +1399,6 @@
     </div>
 
     <script>
-        // App version - update this when releasing new versions
-        const VERSION = '5.4';
-
         class Metronome {
             constructor() {
                 this.audioContext = null;

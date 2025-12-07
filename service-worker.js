@@ -1,10 +1,13 @@
-const CACHE_NAME = 'metronome-v5.4';
+importScripts('/version.js');
+
+const CACHE_NAME = `metronome-v${VERSION}`;
 const urlsToCache = [
   '/',
   '/index.html',
   '/manifest.json',
   '/robots.txt',
-  '/sitemap.xml'
+  '/sitemap.xml',
+  '/version.js'
 ];
 
 // Message handler for skipWaiting
