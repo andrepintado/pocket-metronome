@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Beat Generator - Pocket Metronome</title>
+    <link rel="stylesheet" href="voice-generator.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🎤 Voice Beat Generator</h1>
+        <p class="subtitle">Generate voice counting audio files for the metronome</p>
+
+        <div class="controls">
+            <div class="control-group">
+                <label for="voiceSelect">Voice:</label>
+                <select id="voiceSelect">
+                    <option value="">Loading voices...</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="pitchSlider">Pitch: <span id="pitchValue">1.0</span></label>
+                <input type="range" id="pitchSlider" min="0.5" max="2" step="0.1" value="1.0">
+            </div>
+
+            <div class="control-group">
+                <label for="rateSlider">Rate: <span id="rateValue">1.0</span></label>
+                <input type="range" id="rateSlider" min="0.5" max="2" step="0.1" value="1.0">
+            </div>
+
+            <div class="control-group">
+                <label for="volumeSlider">Volume: <span id="volumeValue">1.0</span></label>
+                <input type="range" id="volumeSlider" min="0.1" max="1" step="0.1" value="1.0">
+            </div>
+
+            <div class="control-group">
+                <label for="maxNumber">Numbers to generate (1 to N):</label>
+                <input type="number" id="maxNumber" min="1" max="32" value="16">
+            </div>
+        </div>
+
+        <div class="actions">
+            <button id="previewBtn" class="btn btn-secondary">Preview "1"</button>
+            <button id="playAllBtn" class="btn btn-primary">Play All Numbers (Preview)</button>
+        </div>
+
+        <div id="progress" class="progress hidden">
+            <div class="progress-bar">
+                <div id="progressFill" class="progress-fill"></div>
+            </div>
+            <p id="progressText">Playing...</p>
+        </div>
+
+        <div id="settings" class="settings-display hidden">
+            <h3>Your Voice Settings:</h3>
+            <div class="settings-info">
+                <p><strong>Voice:</strong> <span id="currentVoice">-</span></p>
+                <p><strong>Pitch:</strong> <span id="currentPitch">-</span></p>
+                <p><strong>Rate:</strong> <span id="currentRate">-</span></p>
+                <p><strong>Volume:</strong> <span id="currentVolume">-</span></p>
+            </div>
+            <button id="copySettingsBtn" class="btn btn-secondary">Copy Settings to Clipboard</button>
+        </div>
+
+        <div class="instructions">
+            <h3>How to Generate Voice Files:</h3>
+            <ol>
+                <li><strong>Find Your Perfect Voice:</strong>
+                    <ul>
+                        <li>Select a voice from the dropdown</li>
+                        <li>Adjust pitch, rate, and volume sliders</li>
+                        <li>Click "Preview '1'" to test the sound</li>
+                        <li>Click "Play All Numbers" to hear the full sequence</li>
+                    </ul>
+                </li>
+                <li><strong>Option A - Manual Recording (Free):</strong>
+                    <ul>
+                        <li>Use audio recording software (e.g., Audacity, QuickTime, Windows Voice Recorder)</li>
+                        <li>Start recording and click "Play All Numbers"</li>
+                        <li>Split the recording into individual files (1.wav, 2.wav, etc.)</li>
+                        <li>Save as WAV or MP3 format</li>
+                    </ul>
+                </li>
+                <li><strong>Option B - TTS Services (Best Quality):</strong>
+                    <ul>
+                        <li><strong>Google Cloud TTS:</strong> <a href="https://cloud.google.com/text-to-speech" target="_blank">cloud.google.com/text-to-speech</a></li>
+                        <li><strong>Amazon Polly:</strong> <a href="https://aws.amazon.com/polly" target="_blank">aws.amazon.com/polly</a></li>
+                        <li><strong>ElevenLabs:</strong> <a href="https://elevenlabs.io" target="_blank">elevenlabs.io</a> (Very natural voices)</li>
+                        <li>Generate files "1", "2", "3", etc. up to your max number</li>
+                        <li>Download as WAV files for best quality</li>
+                    </ul>
+                </li>
+                <li><strong>Use the Files:</strong>
+                    <ul>
+                        <li>Name files as: 1.wav, 2.wav, 3.wav, etc.</li>
+                        <li>Upload to your metronome project</li>
+                        <li>Update the metronome code to load and play voice samples</li>
+                    </ul>
+                </li>
+            </ol>
+            <p><strong>Why can't this tool generate files directly?</strong> Browser security restrictions prevent direct recording of Speech Synthesis API output. However, this tool helps you find the perfect voice settings before recording!</p>
+        </div>
+    </div>
+
+    <script src="voice-generator.js"></script>
+</body>
+</html>
