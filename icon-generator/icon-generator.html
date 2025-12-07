@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metronome Icon Generator</title>
+    <link rel="stylesheet" href="icon-generator.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🎵 Metronome Icon Generator</h1>
+        <p>This tool generates the required icons for your PWA metronome app.</p>
+
+        <div class="preview">
+            <div class="preview-item">
+                <canvas id="icon192" width="192" height="192"></canvas>
+                <p>192x192</p>
+                <button onclick="downloadIcon('icon192', 'icon-192.png')">Download 192x192</button>
+            </div>
+            <div class="preview-item">
+                <canvas id="icon512" width="512" height="512"></canvas>
+                <p>512x512</p>
+                <button onclick="downloadIcon('icon512', 'icon-512.png')">Download 512x512</button>
+            </div>
+        </div>
+
+        <div class="format-preview">
+            <h2>Format Previews</h2>
+            <p>See how your icon looks at different sizes and use cases:</p>
+
+            <div class="format-grid">
+                <div class="format-card">
+                    <h3>Android</h3>
+                    <div class="size-label">192x192</div>
+                    <canvas id="iconAndroid" width="192" height="192"></canvas>
+                </div>
+
+                <div class="format-card">
+                    <h3>Android Circular</h3>
+                    <div class="size-label">192x192</div>
+                    <canvas id="iconAndroidCircular" class="circular" width="192" height="192"></canvas>
+                </div>
+
+                <div class="format-card">
+                    <h3>iOS</h3>
+                    <div class="size-label">180x180</div>
+                    <canvas id="iconIOS" width="180" height="180"></canvas>
+                </div>
+
+                <div class="format-card">
+                    <h3>Favicon</h3>
+                    <div class="size-label">16x16</div>
+                    <canvas id="icon16" width="16" height="16"></canvas>
+                </div>
+
+                <div class="format-card">
+                    <h3>Browser Tab</h3>
+                    <div class="size-label">32x32</div>
+                    <canvas id="icon32" width="32" height="32"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="icon-generator.js"></script>
+</body>
+</html>
