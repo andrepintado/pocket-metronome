@@ -1,4 +1,4 @@
-importScripts('/version.js');
+importScripts('./version.js');
 
 const CACHE_NAME = `metronome-v${VERSION}`;
 const urlsToCache = [
