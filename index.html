@@ -1265,7 +1265,7 @@
     <!-- Info Modal -->
     <div class="info-modal" id="infoModal">
         <h3>🎵 Pocket Metronome</h3>
-        <p style="font-size: 0.85em; color: var(--text-tertiary); margin-top: -10px; margin-bottom: 15px;">Version 5.4</p>
+        <p style="font-size: 0.85em; color: var(--text-tertiary); margin-top: -10px; margin-bottom: 15px;">Version <span id="appVersion"></span></p>
         <p>Created by <strong>André Pintado</strong></p>
         <p>Bugs & suggestions: <a href="mailto:info@pocketmetronome.com" style="color: var(--accent-color); text-decoration: none;">info@pocketmetronome.com</a></p>
         <p>This is a non-profit project, made with ❤️ for musicians.</p>
@@ -1398,6 +1398,9 @@
     </div>
 
     <script>
+        // App version - update this when releasing new versions
+        const VERSION = '5.4';
+
         class Metronome {
             constructor() {
                 this.audioContext = null;
@@ -2771,6 +2774,9 @@
 
         // Initialize the metronome when the page loads
         const metronome = new Metronome();
+
+        // Set version in info modal
+        document.getElementById('appVersion').textContent = VERSION;
 
         // PWA Update Management
         let newWorker;
