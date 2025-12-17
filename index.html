@@ -1726,9 +1726,13 @@
                 this.tapTimes = [];
                 this.tapTimeout = null;
 
+                // Language
+                this.currentLanguage = 'en';
+
                 this.initElements();
                 this.initAudio();
                 this.initTheme();
+                this.initLanguage();
                 this.loadSettings();
                 this.loadPresets();
                 this.attachEventListeners();
@@ -1786,6 +1790,12 @@
                 this.infoModal = document.getElementById('infoModal');
                 this.infoModalClose = document.getElementById('infoModalClose');
                 this.saveConfirmCallback = null;
+
+                // Theme and language elements
+                this.themeToggleSettings = document.getElementById('themeToggleSettings');
+                this.themeIcon = document.getElementById('themeIcon');
+                this.themeText = document.getElementById('themeText');
+                this.languageSelect = document.getElementById('languageSelect');
             }
 
             async initAudio() {
@@ -1850,9 +1860,20 @@
             initTheme() {
                 // Check for saved theme preference or default to light mode
                 const savedTheme = localStorage.getItem('metronome-theme') || 'light';
-                if (savedTheme === 'dark') {
+                const isDark = savedTheme === 'dark';
+
+                if (isDark) {
                     document.body.classList.add('dark-mode');
-                    this.themeToggle.textContent = '☀️';
+                }
+
+                // Update theme toggle button in settings
+                this.updateThemeButton(isDark);
+            }
+
+            updateThemeButton(isDark) {
+                if (this.themeIcon && this.themeText) {
+                    this.themeIcon.textContent = isDark ? '☀️' : '🌙';
+                    this.themeText.textContent = translations[this.currentLanguage][isDark ? 'lightMode' : 'darkMode'];
                 }
             }
 
@@ -1909,11 +1930,129 @@
                 document.body.classList.toggle('dark-mode');
                 const isDark = document.body.classList.contains('dark-mode');
 
-                // Update button icon
-                this.themeToggle.textContent = isDark ? '☀️' : '🌙';
+                // Update theme button in settings
+                this.updateThemeButton(isDark);
 
                 // Save preference
                 localStorage.setItem('metronome-theme', isDark ? 'dark' : 'light');
+            }
+
+            initLanguage() {
+                // Load saved language preference or default to English
+                const savedLanguage = localStorage.getItem('metronome-language') || 'en';
+                this.currentLanguage = savedLanguage;
+
+                // Set language selector value
+                if (this.languageSelect) {
+                    this.languageSelect.value = savedLanguage;
+                }
+
+                // Apply language
+                this.applyLanguage();
+            }
+
+            setLanguage(lang) {
+                this.currentLanguage = lang;
+                localStorage.setItem('metronome-language', lang);
+                this.applyLanguage();
+
+                // Update theme button text in new language
+                const isDark = document.body.classList.contains('dark-mode');
+                this.updateThemeButton(isDark);
+            }
+
+            applyLanguage() {
+                const t = translations[this.currentLanguage];
+                if (!t) return;
+
+                // Update page title
+                document.title = `${t.appTitle} - Free Online Metronome with Custom Time Signatures`;
+
+                // Update main UI
+                const tempoLabel = document.querySelector('label[for="tempoDisplay"]');
+                if (!tempoLabel) {
+                    // If label doesn't exist, find by text content
+                    const labels = document.querySelectorAll('.control-group label');
+                    labels.forEach(label => {
+                        if (label.textContent.includes('Tempo')) {
+                            label.textContent = t.tempo;
+                        } else if (label.textContent.includes('Total Beats') || label.textContent.includes('Batidas')) {
+                            label.textContent = t.totalBeats;
+                        } else if (label.textContent.includes('Starting Beats') || label.textContent.includes('Batidas Iniciais')) {
+                            label.textContent = t.startingBeats;
+                        } else if (label.textContent.includes('Volume')) {
+                            label.textContent = t.volume;
+                        }
+                    });
+                }
+
+                // Update buttons
+                if (this.startPauseBtn) {
+                    const currentText = this.startPauseBtn.textContent.trim();
+                    if (currentText === 'START' || currentText === 'INICIAR' || currentText === 'DÉMARRER' || currentText === 'STARTEN' || currentText === 'INICIAR') {
+                        this.startPauseBtn.textContent = t.start;
+                    } else if (currentText === 'PAUSE' || currentText === 'PAUSAR') {
+                        this.startPauseBtn.textContent = t.pause;
+                    } else if (currentText === 'RESUME' || currentText === 'CONTINUAR' || currentText === 'REPRENDRE' || currentText === 'FORTSETZEN') {
+                        this.startPauseBtn.textContent = t.resume;
+                    }
+                }
+                if (this.stopBtn) this.stopBtn.textContent = t.stop;
+
+                // Update beat indicator if showing ready state
+                if (this.beatIndicator && !this.isPlaying) {
+                    this.beatIndicator.textContent = t.readyToStart;
+                }
+
+                // Update settings modal
+                const settingsH2 = document.querySelector('.settings-modal h2');
+                if (settingsH2) settingsH2.textContent = t.advancedSettings;
+
+                // Update settings groups
+                const settingsH3 = document.querySelectorAll('.settings-group h3');
+                settingsH3.forEach(h3 => {
+                    const text = h3.textContent.trim();
+                    if (text.includes('Time Signature') || text.includes('Compás') || text.includes('Taktart') || text.includes('Fórmula')) {
+                        h3.textContent = t.timeSignature;
+                    } else if (text.includes('Preview') || text.includes('Vista') || text.includes('Aperçu') || text.includes('Vorschau') || text.includes('Prévia')) {
+                        h3.textContent = t.preview;
+                    } else if (text.includes('Metronome Sound') || text.includes('Sonido') || text.includes('Son') || text.includes('Metronomsound') || text.includes('Som')) {
+                        h3.textContent = t.metronomeSound;
+                    } else if (text.includes('Theme') || text.includes('Tema') || text.includes('Thème') || text.includes('Design')) {
+                        h3.textContent = t.theme;
+                    } else if (text.includes('Language') || text.includes('Idioma') || text.includes('Langue') || text.includes('Sprache')) {
+                        h3.textContent = t.language;
+                    } else if (text.includes('Export')) {
+                        h3.textContent = t.exportAudio;
+                    }
+                });
+
+                // Update sound options
+                if (this.soundTypeSelect) {
+                    const options = this.soundTypeSelect.options;
+                    if (options[0]) options[0].text = t.beep;
+                    if (options[1]) options[1].text = t.click;
+                    if (options[2]) options[2].text = t.woodblock;
+                }
+
+                // Update preview label
+                const previewLabel = document.querySelector('.preview-label');
+                if (previewLabel) previewLabel.textContent = t.clickToToggle;
+
+                // Update export button
+                if (this.exportBtn) this.exportBtn.textContent = t.exportAsWAV;
+
+                // Update info modal
+                const infoH3 = document.querySelector('.info-modal h3');
+                if (infoH3) infoH3.textContent = `🎵 ${t.appTitle}`;
+
+                // Update tooltips
+                if (this.newMetronomeBtn) this.newMetronomeBtn.title = t.newMetronome;
+                if (this.savePresetBtn) this.savePresetBtn.title = t.saveCurrentMetronome;
+                if (this.presetsListBtn) this.presetsListBtn.title = t.viewSavedMetronomes;
+
+                const tapTempoBtn = document.getElementById('tapTempo');
+                if (tapTempoBtn) tapTempoBtn.title = t.tapToSetTempo;
             }
 
             openSettings() {
@@ -2735,7 +2874,17 @@
                 });
 
                 // Theme toggle
-                this.themeToggle.addEventListener('click', () => this.toggleTheme());
+                // Theme toggle in settings
+                if (this.themeToggleSettings) {
+                    this.themeToggleSettings.addEventListener('click', () => this.toggleTheme());
+                }
+
+                // Language selector
+                if (this.languageSelect) {
+                    this.languageSelect.addEventListener('change', (e) => {
+                        this.setLanguage(e.target.value);
+                    });
+                }
 
                 // Settings modal
                 this.settingsToggle.addEventListener('click', () => this.openSettings());
@@ -3047,7 +3196,7 @@
                 this.isCountIn = this.startingBeats > 0;
                 this.nextNoteTime = this.audioContext.currentTime;
 
-                this.startPauseBtn.textContent = 'PAUSE';
+                this.startPauseBtn.textContent = translations[this.currentLanguage].pause;
                 this.startPauseBtn.classList.remove('paused');
                 this.stopBtn.disabled = false;
 
@@ -3060,7 +3209,7 @@
                 this.isPaused = true;
                 clearInterval(this.schedulerTimer);
 
-                this.startPauseBtn.textContent = 'RESUME';
+                this.startPauseBtn.textContent = translations[this.currentLanguage].resume;
                 this.startPauseBtn.classList.add('paused');
 
                 // Show beat position when paused
@@ -3082,7 +3231,7 @@
                 this.isPaused = false;
                 this.nextNoteTime = this.audioContext.currentTime;
 
-                this.startPauseBtn.textContent = 'PAUSE';
+                this.startPauseBtn.textContent = translations[this.currentLanguage].pause;
                 this.startPauseBtn.classList.remove('paused');
 
                 this.schedulerTimer = setInterval(() => this.scheduler(), this.lookahead);
@@ -3095,10 +3244,10 @@
                 this.isPaused = false;
                 clearInterval(this.schedulerTimer);
 
-                this.startPauseBtn.textContent = 'START';
+                this.startPauseBtn.textContent = translations[this.currentLanguage].start;
                 this.startPauseBtn.classList.remove('paused');
                 this.stopBtn.disabled = true;
-                this.beatIndicator.textContent = 'Ready to start';
+                this.beatIndicator.textContent = translations[this.currentLanguage].readyToStart;
                 this.beatIndicator.classList.remove('active');
             }
 
