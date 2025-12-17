@@ -3288,7 +3288,10 @@
         let swRegistration;
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/service-worker.js')
+                // Use version as query parameter to ensure fresh service worker on version changes
+                navigator.serviceWorker.register('/service-worker.js?v=' + VERSION, {
+                    updateViaCache: 'none' // Always check for updates, bypass HTTP cache
+                })
                     .then((registration) => {
                         swRegistration = registration;
                         console.log('Service Worker registered successfully:', registration.scope);
