@@ -1367,6 +1367,7 @@
                 <option value="beep">Beep (Default)</option>
                 <option value="click">Click</option>
                 <option value="woodblock">Woodblock</option>
+                <option value="voice">Voice (beta)</option>
             </select>
         </div>
 
@@ -1421,7 +1422,7 @@
             <label>Tempo (BPM)</label>
             <div class="tempo-control">
                 <button class="tempo-btn" id="decreaseTempo" title="Decrease tempo">−</button>
-                <input type="number" class="tempo-display" id="tempoDisplay" value="120" min="30" max="300" title="Enter tempo manually">
+                <input type="number" class="tempo-display" id="tempoDisplay" value="120" min="20" max="300" title="Enter tempo manually">
                 <button class="tempo-btn" id="increaseTempo" title="Increase tempo">+</button>
                 <button class="tempo-btn tap-btn" id="tapTempo" title="Tap to set tempo">Tap</button>
             </div>
@@ -1478,6 +1479,7 @@
                 beep: "Beep (Default)",
                 click: "Click",
                 woodblock: "Woodblock",
+                voice: "Voice (beta)",
                 theme: "Theme",
                 darkMode: "Dark Mode",
                 lightMode: "Light Mode",
@@ -1516,6 +1518,7 @@
                 beep: "Beep (Predeterminado)",
                 click: "Clic",
                 woodblock: "Bloque de Madera",
+                voice: "Voz (beta)",
                 theme: "Tema",
                 darkMode: "Modo Oscuro",
                 lightMode: "Modo Claro",
@@ -1554,6 +1557,7 @@
                 beep: "Bip (Par défaut)",
                 click: "Clic",
                 woodblock: "Bloc de Bois",
+                voice: "Voix (beta)",
                 theme: "Thème",
                 darkMode: "Mode Sombre",
                 lightMode: "Mode Clair",
@@ -1592,6 +1596,7 @@
                 beep: "Piep (Standard)",
                 click: "Klick",
                 woodblock: "Holzblock",
+                voice: "Stimme (beta)",
                 theme: "Design",
                 darkMode: "Dunkler Modus",
                 lightMode: "Heller Modus",
@@ -1630,6 +1635,7 @@
                 beep: "Bipe (Padrão)",
                 click: "Clique",
                 woodblock: "Bloco de Madeira",
+                voice: "Voz (beta)",
                 theme: "Tema",
                 darkMode: "Modo Escuro",
                 lightMode: "Modo Claro",
@@ -1668,6 +1674,7 @@
                 beep: "Bip (Predefinido)",
                 click: "Clique",
                 woodblock: "Bloco de Madeira",
+                voice: "Voz (beta)",
                 theme: "Tema",
                 darkMode: "Modo Escuro",
                 lightMode: "Modo Claro",
@@ -1813,6 +1820,9 @@
 
                 // Generate actual audio buffers using oscillators (better quality than empty WAV)
                 await this.generateSoundBuffers();
+
+                // Load voice samples
+                await this.loadVoiceSamples();
             }
 
             async generateSoundBuffers() {
@@ -1855,6 +1865,27 @@
                 this.audioBuffers.woodblock = woodBuffer;
 
                 this.audioLoaded = true;
+            }
+
+            async loadVoiceSamples() {
+                // Load voice samples (1-32) from /voice/ folder
+                this.audioBuffers.voice = [];
+
+                try {
+                    for (let i = 1; i <= 32; i++) {
+                        const response = await fetch(`/voice/${i}.wav`);
+                        if (!response.ok) {
+                            console.warn(`Failed to load voice sample ${i}`);
+                            continue;
+                        }
+                        const arrayBuffer = await response.arrayBuffer();
+                        const audioBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
+                        this.audioBuffers.voice[i] = audioBuffer;
+                    }
+                    console.log('Voice samples loaded successfully');
+                } catch (error) {
+                    console.error('Error loading voice samples:', error);
+                }
             }
 
             initTheme() {
@@ -2033,6 +2064,7 @@
                     if (options[0]) options[0].text = t.beep;
                     if (options[1]) options[1].text = t.click;
                     if (options[2]) options[2].text = t.woodblock;
+                    if (options[3]) options[3].text = t.voice;
                 }
 
                 // Update preview label
@@ -3052,7 +3084,7 @@
 
             changeTempo(delta) {
                 const newTempo = this.tempo + delta;
-                if (newTempo >= 30 && newTempo <= 300) {
+                if (newTempo >= 20 && newTempo <= 300) {
                     this.tempo = newTempo;
                     this.updateTempoDisplay();
                     this.saveSettings();
@@ -3091,7 +3123,7 @@
                     let bpm = Math.round(60000 / avgInterval);
 
                     // Clamp to valid range
-                    bpm = Math.max(30, Math.min(300, bpm));
+                    bpm = Math.max(20, Math.min(300, bpm));
 
                     // Update tempo
                     this.tempo = bpm;
@@ -3123,15 +3155,23 @@
                 const gainNode = this.audioContext.createGain();
 
                 // Select the appropriate audio buffer
-                source.buffer = this.audioBuffers[this.soundType] || this.audioBuffers.beep;
-
-                // Apply pitch shift for count-in and accented beats
-                if (isCountIn) {
-                    source.playbackRate.value = 0.9; // Slightly lower pitch for count-in
-                } else if (isAccented) {
-                    source.playbackRate.value = 1.2; // Higher pitch for accented beats
+                if (this.soundType === 'voice' && this.audioBuffers.voice) {
+                    // For voice, use the numbered sample (1-32)
+                    const voiceNumber = ((beatNumber % 32) + 1);
+                    source.buffer = this.audioBuffers.voice[voiceNumber] || this.audioBuffers.beep;
+                    // Don't apply pitch shift to voice samples (sounds unnatural)
+                    source.playbackRate.value = 1.0;
                 } else {
-                    source.playbackRate.value = 1.0; // Normal pitch
+                    source.buffer = this.audioBuffers[this.soundType] || this.audioBuffers.beep;
+
+                    // Apply pitch shift for count-in and accented beats
+                    if (isCountIn) {
+                        source.playbackRate.value = 0.9; // Slightly lower pitch for count-in
+                    } else if (isAccented) {
+                        source.playbackRate.value = 1.2; // Higher pitch for accented beats
+                    } else {
+                        source.playbackRate.value = 1.0; // Normal pitch
+                    }
                 }
 
                 // Connect audio graph
