@@ -1345,15 +1345,6 @@
         <h2>Advanced Settings</h2>
 
         <div class="settings-group">
-            <h3>Time Signature</h3>
-            <div class="time-signature-input">
-                <input type="number" id="timeSigNumerator" min="1" max="32" value="4">
-                <span>/</span>
-                <input type="number" id="timeSigDenominator" min="1" max="16" value="4">
-            </div>
-        </div>
-
-        <div class="settings-group">
             <h3>Preview</h3>
             <div class="preview-label">Click on the notes to toggle accents</div>
             <div class="beat-preview" id="beatPreview">
@@ -1417,6 +1408,15 @@
         </button>
         <h1>🎵 Pocket Metronome</h1>
         <div class="preset-name" id="presetName" title="Click to save">Unsaved</div>
+
+        <div class="control-group">
+            <label>Time Signature</label>
+            <div class="time-signature-input">
+                <input type="number" id="timeSigNumerator" min="1" max="32" value="4">
+                <span>/</span>
+                <input type="number" id="timeSigDenominator" min="1" max="16" value="4">
+            </div>
+        </div>
 
         <div class="control-group">
             <label>Tempo (BPM)</label>
@@ -2009,6 +2009,9 @@
                         label.textContent = t.startingBeats;
                     } else if (forAttr === 'volume') {
                         label.textContent = t.volume;
+                    } else if (!forAttr && label.parentElement.querySelector('#timeSigNumerator')) {
+                        // Time Signature label (doesn't have 'for' attribute, but parent contains timeSigNumerator)
+                        label.textContent = t.timeSignature;
                     } else if (!forAttr && label.parentElement.querySelector('#tempoDisplay')) {
                         // Tempo label (doesn't have 'for' attribute, but parent contains tempoDisplay)
                         label.textContent = t.tempo;
@@ -2043,9 +2046,7 @@
                     if (!h3) return;
 
                     // Identify by position or unique elements in the group
-                    if (group.querySelector('#timeSigNumerator')) {
-                        h3.textContent = t.timeSignature;
-                    } else if (group.querySelector('.accent-preview')) {
+                    if (group.querySelector('#beatPreview')) {
                         h3.textContent = t.preview;
                     } else if (group.querySelector('#soundType')) {
                         h3.textContent = t.metronomeSound;
@@ -3156,8 +3157,8 @@
 
                 // Select the appropriate audio buffer
                 if (this.soundType === 'voice' && this.audioBuffers.voice) {
-                    // For voice, use the numbered sample (1-32)
-                    const voiceNumber = ((beatNumber % 32) + 1);
+                    // For voice, use the beat number within the measure (1-based)
+                    const voiceNumber = beatInMeasure + 1;
                     source.buffer = this.audioBuffers.voice[voiceNumber] || this.audioBuffers.beep;
                     // Don't apply pitch shift to voice samples (sounds unnatural)
                     source.playbackRate.value = 1.0;
@@ -3375,32 +3376,36 @@
             });
         }
 
-        // Manual update check button
+        // Manual update check button - simple version comparison
         document.getElementById('checkUpdateBtn').addEventListener('click', async () => {
             const updateStatus = document.getElementById('updateStatus');
             const checkUpdateBtn = document.getElementById('checkUpdateBtn');
-
-            if (!swRegistration) {
-                updateStatus.textContent = '⚠️ Service worker not registered';
-                updateStatus.style.color = 'var(--text-secondary)';
-                return;
-            }
 
             try {
                 checkUpdateBtn.disabled = true;
                 updateStatus.textContent = '🔄 Checking for updates...';
                 updateStatus.style.color = 'var(--text-secondary)';
 
-                await swRegistration.update();
+                // Fetch version.js with cache-busting to get the latest version
+                const response = await fetch('/version.js?' + Date.now());
+                const versionText = await response.text();
 
-                // Wait a bit to see if an update was found
-                setTimeout(() => {
-                    if (!newWorker || newWorker.state !== 'installed') {
-                        updateStatus.textContent = '✅ You\'re up to date!';
-                        updateStatus.style.color = 'var(--text-secondary)';
-                    }
-                    checkUpdateBtn.disabled = false;
-                }, 2000);
+                // Extract version number from the file
+                const match = versionText.match(/VERSION\s*=\s*['"]([^'"]+)['"]/);
+                const latestVersion = match ? match[1] : null;
+
+                if (latestVersion && latestVersion !== VERSION) {
+                    updateStatus.textContent = `✨ New version ${latestVersion} available! Reload to update.`;
+                    updateStatus.style.color = 'var(--accent-color)';
+
+                    // Show update banner
+                    showUpdateBanner();
+                } else {
+                    updateStatus.textContent = `✅ You're up to date! (v${VERSION})`;
+                    updateStatus.style.color = 'var(--text-secondary)';
+                }
+
+                checkUpdateBtn.disabled = false;
             } catch (error) {
                 updateStatus.textContent = '❌ Update check failed';
                 updateStatus.style.color = 'var(--text-secondary)';
