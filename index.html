@@ -813,6 +813,80 @@
             border-color: var(--accent-hover);
         }
 
+        .vibration-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            background: var(--container-bg);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 60px var(--shadow-color);
+            z-index: 1002;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            max-width: 450px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .vibration-modal.open {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .vibration-modal h3 {
+            font-size: 2.5em;
+            margin: 0 0 10px 0;
+        }
+
+        .vibration-modal h4 {
+            color: var(--text-primary);
+            margin: 0 0 20px 0;
+            font-size: 1.3em;
+        }
+
+        .vibration-modal #vibrationModalContent {
+            color: var(--text-secondary);
+            text-align: left;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-size: 0.95em;
+        }
+
+        .vibration-modal #vibrationModalContent ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+
+        .vibration-modal #vibrationModalContent li {
+            margin: 8px 0;
+        }
+
+        .vibration-modal #vibrationModalContent strong {
+            color: var(--text-primary);
+        }
+
+        .vibration-modal-close {
+            background: var(--accent-color);
+            color: white;
+            border: 2px solid var(--accent-color);
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.2s ease;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .vibration-modal-close:hover {
+            background: var(--accent-hover);
+            border-color: var(--accent-hover);
+        }
+
         .settings-modal h2 {
             color: var(--text-primary);
             margin-bottom: 25px;
@@ -1341,6 +1415,14 @@
             <button class="delete-modal-cancel" id="deleteModalCancel">Cancel</button>
             <button class="delete-modal-confirm" id="deleteModalConfirm">Delete</button>
         </div>
+    </div>
+
+    <!-- Vibration Info Modal -->
+    <div class="vibration-modal" id="vibrationModal">
+        <h3 id="vibrationModalIcon"></h3>
+        <h4 id="vibrationModalTitle"></h4>
+        <div id="vibrationModalContent"></div>
+        <button class="vibration-modal-close" id="vibrationModalClose">Got it</button>
     </div>
 
     <div class="presets-modal" id="presetsModal">
@@ -3124,25 +3206,65 @@
                     this.saveSettings();
                     this.markAsModified();
 
-                    // Test vibration when enabled to verify it works
+                    // Test vibration and inform about limitations when enabled
                     if (e.target.checked) {
                         if ('vibrate' in navigator) {
                             try {
-                                // Use a pattern: vibrate 300ms, pause 100ms, vibrate 300ms
+                                // Test with a double-pulse pattern
                                 const result = navigator.vibrate([300, 100, 300]);
                                 console.log('Vibration test result:', result);
+
                                 if (result === false) {
-                                    alert('❌ Vibration blocked by browser or device settings.\n\nCheck:\n- Chrome Settings > Site Settings > pocketmetronome.com\n- Phone is not in Do Not Disturb mode\n- Vibration is enabled in system settings');
+                                    // Vibration blocked
+                                    showVibrationModal(
+                                        '❌',
+                                        'Vibration Blocked',
+                                        '<p>Vibration is blocked by your device.</p>' +
+                                        '<p><strong>Please enable vibration in:</strong></p>' +
+                                        '<ul>' +
+                                        '<li>Android: Settings > Sound > Haptics</li>' +
+                                        '<li>Chrome: Site Settings for pocketmetronome.com</li>' +
+                                        '<li>Turn off Do Not Disturb mode</li>' +
+                                        '</ul>'
+                                    );
                                 } else {
-                                    alert('✓ Vibration API call succeeded.\n\nIf you didn\'t feel a vibration, check:\n- Chrome://flags (search "vibrate")\n- Site permissions for pocketmetronome.com\n- System vibration settings\n- Do Not Disturb / Silent mode');
+                                    // Vibration working
+                                    showVibrationModal(
+                                        '✓',
+                                        'Vibration Enabled!',
+                                        '<p>You should have felt a test vibration.</p>' +
+                                        '<p><strong>Limitations:</strong></p>' +
+                                        '<ul>' +
+                                        '<li>Only works on mobile devices (not desktop)</li>' +
+                                        '<li>Requires HTTPS ✓</li>' +
+                                        '<li>Not supported on iOS/Safari</li>' +
+                                        '<li>Requires haptics enabled in Android settings</li>' +
+                                        '<li>May be blocked in Do Not Disturb mode</li>' +
+                                        '</ul>' +
+                                        '<p style="margin-top: 15px; font-size: 0.9em; color: var(--text-tertiary);">If you didn\'t feel a vibration, check your device settings.</p>'
+                                    );
                                 }
                             } catch (err) {
                                 console.error('Vibration test failed:', err);
-                                alert('❌ Vibration error: ' + err.message);
+                                showVibrationModal(
+                                    '❌',
+                                    'Vibration Error',
+                                    '<p>' + err.message + '</p>'
+                                );
                             }
                         } else {
                             console.warn('Vibration API not available');
-                            alert('❌ Vibration API not available on this device');
+                            showVibrationModal(
+                                '❌',
+                                'Vibration Not Available',
+                                '<p>This device/browser doesn\'t support vibration.</p>' +
+                                '<p><strong>Requirements:</strong></p>' +
+                                '<ul>' +
+                                '<li>Mobile device with vibration hardware</li>' +
+                                '<li>Chrome/Firefox/Edge (not Safari)</li>' +
+                                '<li>HTTPS connection</li>' +
+                                '</ul>'
+                            );
                         }
                     }
                 });
@@ -3320,7 +3442,7 @@
                 if (this.vibrateOnBeat) {
                     if ('vibrate' in navigator) {
                         try {
-                            const result = navigator.vibrate(100); // Vibrate for 100ms
+                            const result = navigator.vibrate(50); // Vibrate for 50ms
                             if (!result) {
                                 console.warn('Vibration call returned false');
                             }
@@ -3456,6 +3578,28 @@
 
         // Set version in info modal
         document.getElementById('appVersion').textContent = VERSION;
+
+        // Vibration Info Modal
+        function showVibrationModal(icon, title, content) {
+            const modal = document.getElementById('vibrationModal');
+            const modalIcon = document.getElementById('vibrationModalIcon');
+            const modalTitle = document.getElementById('vibrationModalTitle');
+            const modalContent = document.getElementById('vibrationModalContent');
+
+            modalIcon.textContent = icon;
+            modalTitle.textContent = title;
+            modalContent.innerHTML = content;
+
+            modal.classList.add('open');
+        }
+
+        function hideVibrationModal() {
+            const modal = document.getElementById('vibrationModal');
+            modal.classList.remove('open');
+        }
+
+        // Close vibration modal button
+        document.getElementById('vibrationModalClose').addEventListener('click', hideVibrationModal);
 
         // PWA Update Management
         let newWorker;
