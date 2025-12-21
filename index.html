@@ -3124,25 +3124,43 @@
                     this.saveSettings();
                     this.markAsModified();
 
-                    // Test vibration when enabled to verify it works
+                    // Test vibration and inform about limitations when enabled
                     if (e.target.checked) {
                         if ('vibrate' in navigator) {
                             try {
-                                // Use a pattern: vibrate 300ms, pause 100ms, vibrate 300ms
+                                // Test with a double-pulse pattern
                                 const result = navigator.vibrate([300, 100, 300]);
                                 console.log('Vibration test result:', result);
-                                if (result === false) {
-                                    alert('❌ Vibration blocked by browser or device settings.\n\nCheck:\n- Chrome Settings > Site Settings > pocketmetronome.com\n- Phone is not in Do Not Disturb mode\n- Vibration is enabled in system settings');
-                                } else {
-                                    alert('✓ Vibration API call succeeded.\n\nIf you didn\'t feel a vibration, check:\n- Chrome://flags (search "vibrate")\n- Site permissions for pocketmetronome.com\n- System vibration settings\n- Do Not Disturb / Silent mode');
-                                }
+
+                                // Show informative message about limitations
+                                const message = result === false
+                                    ? '❌ Vibration blocked by your device.\n\n' +
+                                      'Please enable vibration in:\n' +
+                                      '• Android: Settings > Sound > Haptics\n' +
+                                      '• Chrome: Site Settings for pocketmetronome.com\n' +
+                                      '• Turn off Do Not Disturb mode'
+                                    : '✓ Vibration enabled!\n\n' +
+                                      'LIMITATIONS:\n' +
+                                      '• Only works on mobile devices (not desktop)\n' +
+                                      '• Requires HTTPS (✓ already enabled)\n' +
+                                      '• Not supported on iOS/Safari\n' +
+                                      '• Requires haptics enabled in Android settings\n' +
+                                      '• May be blocked in Do Not Disturb mode\n\n' +
+                                      (result ? 'You should have felt a test vibration!' : 'If you didn\'t feel a vibration, check your device settings.');
+
+                                alert(message);
                             } catch (err) {
                                 console.error('Vibration test failed:', err);
-                                alert('❌ Vibration error: ' + err.message);
+                                alert('❌ Vibration Error\n\n' + err.message);
                             }
                         } else {
                             console.warn('Vibration API not available');
-                            alert('❌ Vibration API not available on this device');
+                            alert('❌ Vibration Not Available\n\n' +
+                                  'This device/browser doesn\'t support vibration.\n\n' +
+                                  'Requirements:\n' +
+                                  '• Mobile device with vibration hardware\n' +
+                                  '• Chrome/Firefox/Edge (not Safari)\n' +
+                                  '• HTTPS connection');
                         }
                     }
                 });
@@ -3320,7 +3338,7 @@
                 if (this.vibrateOnBeat) {
                     if ('vibrate' in navigator) {
                         try {
-                            const result = navigator.vibrate(100); // Vibrate for 100ms
+                            const result = navigator.vibrate(50); // Vibrate for 50ms
                             if (!result) {
                                 console.warn('Vibration call returned false');
                             }
