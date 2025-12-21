@@ -3294,6 +3294,15 @@
             scheduleNote(beatNumber, time) {
                 this.playClick(time, this.isCountIn, beatNumber);
 
+                // Vibrate immediately (don't wait for scheduled time)
+                if (this.vibrateOnBeat && 'vibrate' in navigator) {
+                    try {
+                        navigator.vibrate(100); // Vibrate for 100ms
+                    } catch (e) {
+                        console.warn('Vibration failed:', e);
+                    }
+                }
+
                 // Update UI on main thread
                 const beatText = this.isCountIn
                     ? `Count-in: ${beatNumber + 1}/${this.startingBeats}`
@@ -3310,15 +3319,6 @@
                     if (this.blinkOnBeat) {
                         document.body.classList.add('blink-active');
                         setTimeout(() => document.body.classList.remove('blink-active'), 150);
-                    }
-
-                    // Vibrate effect
-                    if (this.vibrateOnBeat && 'vibrate' in navigator) {
-                        try {
-                            navigator.vibrate(100); // Vibrate for 100ms
-                        } catch (e) {
-                            console.warn('Vibration failed:', e);
-                        }
                     }
                 }, (time - this.audioContext.currentTime) * 1000);
             }
