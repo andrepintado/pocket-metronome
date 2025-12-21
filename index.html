@@ -3123,6 +3123,22 @@
                     this.vibrateOnBeat = e.target.checked;
                     this.saveSettings();
                     this.markAsModified();
+
+                    // Test vibration when enabled to verify it works
+                    if (e.target.checked) {
+                        if ('vibrate' in navigator) {
+                            try {
+                                navigator.vibrate(200); // Test vibration
+                                console.log('Vibration test triggered');
+                            } catch (err) {
+                                console.error('Vibration test failed:', err);
+                                alert('Vibration not supported or blocked on this device');
+                            }
+                        } else {
+                            console.warn('Vibration API not available');
+                            alert('Vibration API not available on this device');
+                        }
+                    }
                 });
 
                 // Export button
@@ -3295,11 +3311,18 @@
                 this.playClick(time, this.isCountIn, beatNumber);
 
                 // Vibrate immediately (don't wait for scheduled time)
-                if (this.vibrateOnBeat && 'vibrate' in navigator) {
-                    try {
-                        navigator.vibrate(100); // Vibrate for 100ms
-                    } catch (e) {
-                        console.warn('Vibration failed:', e);
+                if (this.vibrateOnBeat) {
+                    if ('vibrate' in navigator) {
+                        try {
+                            const result = navigator.vibrate(100); // Vibrate for 100ms
+                            if (!result) {
+                                console.warn('Vibration call returned false');
+                            }
+                        } catch (e) {
+                            console.error('Vibration error:', e);
+                        }
+                    } else {
+                        console.warn('Vibration API not available in navigator');
                     }
                 }
 
