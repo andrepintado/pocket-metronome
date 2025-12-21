@@ -1628,10 +1628,14 @@
                 // Language
                 this.currentLanguage = 'en';
 
+                this.init();
+            }
+
+            async init() {
                 this.initElements();
                 this.initAudio();
-                this.initTheme();
-                this.initLanguage();
+                await this.initLanguage(); // Load translations first
+                this.initTheme(); // Now theme can use translations
                 this.loadSettings();
                 this.loadPresets();
                 this.attachEventListeners();
