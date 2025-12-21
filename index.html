@@ -1375,14 +1375,14 @@
 
         <div class="settings-group">
             <h3 data-i18n="beatEffects">Beat Effects</h3>
-            <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div style="display: flex; gap: 20px;">
                 <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
                     <input type="checkbox" id="blinkOnBeat" style="width: 20px; height: 20px; cursor: pointer;">
-                    <span data-i18n="blinkOnBeat">Blink on Beat</span>
+                    <span data-i18n="blinkOnBeat">Blink</span>
                 </label>
                 <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
                     <input type="checkbox" id="vibrateOnBeat" style="width: 20px; height: 20px; cursor: pointer;">
-                    <span data-i18n="vibrateOnBeat">Vibrate on Beat</span>
+                    <span data-i18n="vibrateOnBeat">Vibrate</span>
                 </label>
             </div>
         </div>
@@ -1506,8 +1506,8 @@
                 woodblock: "Woodblock",
                 voice: "Voice (very beta)",
                 beatEffects: "Beat Effects",
-                blinkOnBeat: "Blink on Beat",
-                vibrateOnBeat: "Vibrate on Beat",
+                blinkOnBeat: "Blink",
+                vibrateOnBeat: "Vibrate",
                 theme: "Theme",
                 darkMode: "Dark Mode",
                 lightMode: "Light Mode",
@@ -1548,8 +1548,8 @@
                 woodblock: "Bloque de Madera",
                 voice: "Voz (muy beta)",
                 beatEffects: "Efectos de Pulso",
-                blinkOnBeat: "Parpadear con el Pulso",
-                vibrateOnBeat: "Vibrar con el Pulso",
+                blinkOnBeat: "Parpadear",
+                vibrateOnBeat: "Vibrar",
                 theme: "Tema",
                 darkMode: "Modo Oscuro",
                 lightMode: "Modo Claro",
@@ -1590,8 +1590,8 @@
                 woodblock: "Bloc de Bois",
                 voice: "Voix (très beta)",
                 beatEffects: "Effets de Battement",
-                blinkOnBeat: "Clignoter au Battement",
-                vibrateOnBeat: "Vibrer au Battement",
+                blinkOnBeat: "Clignoter",
+                vibrateOnBeat: "Vibrer",
                 theme: "Thème",
                 darkMode: "Mode Sombre",
                 lightMode: "Mode Clair",
@@ -1632,8 +1632,8 @@
                 woodblock: "Holzblock",
                 voice: "Stimme (sehr beta)",
                 beatEffects: "Schlageffekte",
-                blinkOnBeat: "Blinken zum Schlag",
-                vibrateOnBeat: "Vibrieren zum Schlag",
+                blinkOnBeat: "Blinken",
+                vibrateOnBeat: "Vibrieren",
                 theme: "Design",
                 darkMode: "Dunkler Modus",
                 lightMode: "Heller Modus",
@@ -1674,8 +1674,8 @@
                 woodblock: "Bloco de Madeira",
                 voice: "Voz (muito beta)",
                 beatEffects: "Efeitos de Batida",
-                blinkOnBeat: "Piscar na Batida",
-                vibrateOnBeat: "Vibrar na Batida",
+                blinkOnBeat: "Piscar",
+                vibrateOnBeat: "Vibrar",
                 theme: "Tema",
                 darkMode: "Modo Escuro",
                 lightMode: "Modo Claro",
@@ -1716,8 +1716,8 @@
                 woodblock: "Bloco de Madeira",
                 voice: "Voz (muito beta)",
                 beatEffects: "Efeitos de Batimento",
-                blinkOnBeat: "Piscar no Batimento",
-                vibrateOnBeat: "Vibrar no Batimento",
+                blinkOnBeat: "Piscar",
+                vibrateOnBeat: "Vibrar",
                 theme: "Tema",
                 darkMode: "Modo Escuro",
                 lightMode: "Modo Claro",
@@ -3314,7 +3314,11 @@
 
                     // Vibrate effect
                     if (this.vibrateOnBeat && 'vibrate' in navigator) {
-                        navigator.vibrate(50); // Vibrate for 50ms
+                        try {
+                            navigator.vibrate(100); // Vibrate for 100ms
+                        } catch (e) {
+                            console.warn('Vibration failed:', e);
+                        }
                     }
                 }, (time - this.audioContext.currentTime) * 1000);
             }
