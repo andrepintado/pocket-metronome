@@ -2634,6 +2634,24 @@
                 }
                 buffers.woodblock = woodBuffer;
 
+                // Load voice samples if using voice sound type
+                if (this.soundType === 'voice') {
+                    buffers.voice = [];
+                    const beatsPerMeasure = this.getBeatsPerMeasure();
+
+                    // Only load the voice samples needed for the time signature (1 to beatsPerMeasure)
+                    for (let i = 1; i <= Math.min(beatsPerMeasure, 32); i++) {
+                        try {
+                            const response = await fetch(`/voice/${i}.wav`);
+                            const arrayBuffer = await response.arrayBuffer();
+                            const audioBuffer = await context.decodeAudioData(arrayBuffer);
+                            buffers.voice[i] = audioBuffer;
+                        } catch (error) {
+                            console.warn(`Failed to load voice sample ${i} for export:`, error);
+                        }
+                    }
+                }
+
                 return buffers;
             }
 
@@ -2645,14 +2663,23 @@
                 const beatInMeasure = beatNumber % beatsPerMeasure;
                 const isAccented = !isCountIn && this.accentPattern[beatInMeasure];
 
-                source.buffer = buffers[this.soundType] || buffers.beep;
-
-                if (isCountIn) {
-                    source.playbackRate.value = 0.9;
-                } else if (isAccented) {
-                    source.playbackRate.value = 1.2;
-                } else {
+                // Select the appropriate audio buffer
+                if (this.soundType === 'voice' && buffers.voice) {
+                    // For voice, use the beat number within the measure (1-based)
+                    const voiceNumber = beatInMeasure + 1;
+                    source.buffer = buffers.voice[voiceNumber] || buffers.beep;
+                    // Don't apply pitch shift to voice samples (sounds unnatural)
                     source.playbackRate.value = 1.0;
+                } else {
+                    source.buffer = buffers[this.soundType] || buffers.beep;
+
+                    if (isCountIn) {
+                        source.playbackRate.value = 0.9;
+                    } else if (isAccented) {
+                        source.playbackRate.value = 1.2;
+                    } else {
+                        source.playbackRate.value = 1.0;
+                    }
                 }
 
                 source.connect(gainNode);
@@ -3318,10 +3345,19 @@
 
             banner.classList.add('show');
 
-            updateBtn.addEventListener('click', () => {
-                if (newWorker) {
-                    newWorker.postMessage({ action: 'skipWaiting' });
+            // Remove any existing click listeners
+            const newUpdateBtn = updateBtn.cloneNode(true);
+            updateBtn.parentNode.replaceChild(newUpdateBtn, updateBtn);
+
+            newUpdateBtn.addEventListener('click', async () => {
+                // Clear all caches
+                if ('caches' in window) {
+                    const cacheNames = await caches.keys();
+                    await Promise.all(cacheNames.map(name => caches.delete(name)));
                 }
+
+                // Hard reload (bypasses cache)
+                window.location.reload(true);
             });
         }
 
