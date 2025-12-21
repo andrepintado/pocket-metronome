@@ -3128,15 +3128,20 @@
                     if (e.target.checked) {
                         if ('vibrate' in navigator) {
                             try {
-                                navigator.vibrate(200); // Test vibration
-                                console.log('Vibration test triggered');
+                                const result = navigator.vibrate(200); // Test vibration
+                                console.log('Vibration test result:', result);
+                                if (result === false) {
+                                    alert('❌ Vibration blocked by browser or device settings');
+                                } else {
+                                    alert('✓ Vibration test sent (you should have felt a vibration)');
+                                }
                             } catch (err) {
                                 console.error('Vibration test failed:', err);
-                                alert('Vibration not supported or blocked on this device');
+                                alert('❌ Vibration error: ' + err.message);
                             }
                         } else {
                             console.warn('Vibration API not available');
-                            alert('Vibration API not available on this device');
+                            alert('❌ Vibration API not available on this device');
                         }
                     }
                 });
