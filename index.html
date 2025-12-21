@@ -3420,6 +3420,11 @@
         // Initialize the metronome when the page loads
         const metronome = new Metronome();
 
+        // Clear the refresh flag after successful load
+        setTimeout(() => {
+            sessionStorage.removeItem('justRefreshed');
+        }, 2000); // Wait 2 seconds for everything to settle
+
         // Set version in info modal
         document.getElementById('appVersion').textContent = VERSION;
 
@@ -3427,6 +3432,11 @@
         let newWorker;
 
         function showUpdateBanner() {
+            // Don't show banner if we just refreshed
+            if (sessionStorage.getItem('justRefreshed') === 'true') {
+                return;
+            }
+
             const banner = document.getElementById('updateBanner');
             const updateBtn = document.getElementById('updateBtn');
 
@@ -3437,6 +3447,9 @@
             updateBtn.parentNode.replaceChild(newUpdateBtn, updateBtn);
 
             newUpdateBtn.addEventListener('click', async () => {
+                // Set flag to prevent banner from showing after refresh
+                sessionStorage.setItem('justRefreshed', 'true');
+
                 // Clear all caches
                 if ('caches' in window) {
                     const cacheNames = await caches.keys();
