@@ -8,6 +8,13 @@ const urlsToCache = [
   '/robots.txt',
   '/sitemap.xml',
   '/version.js',
+  // Language files
+  '/lang/en.json',
+  '/lang/es.json',
+  '/lang/fr.json',
+  '/lang/de.json',
+  '/lang/pt-BR.json',
+  '/lang/pt-PT.json',
   // Voice samples
   '/voice/1.wav',
   '/voice/2.wav',

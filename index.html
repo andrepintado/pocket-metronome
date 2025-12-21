@@ -1565,260 +1565,25 @@
 
     <script>
         // Translations
-        const translations = {
-            en: {
-                appTitle: "Pocket Metronome",
-                unsaved: "Unsaved",
-                tempo: "Tempo (BPM)",
-                totalBeats: "Total Beats (0 = unlimited)",
-                startingBeats: "Starting Beats (count-in)",
-                volume: "Volume",
-                start: "START",
-                stop: "STOP",
-                pause: "PAUSE",
-                resume: "RESUME",
-                readyToStart: "Ready to start",
-                advancedSettings: "Advanced Settings",
-                timeSignature: "Time Signature",
-                preview: "Preview",
-                clickToToggle: "Click on the notes to toggle accents",
-                metronomeSound: "Metronome Sound",
-                beep: "Beep (Default)",
-                click: "Click",
-                woodblock: "Woodblock",
-                voice: "Voice (very beta)",
-                beatEffects: "Beat Effects",
-                blinkOnBeat: "Blink",
-                vibrateOnBeat: "Vibrate",
-                theme: "Theme",
-                darkMode: "Dark Mode",
-                lightMode: "Light Mode",
-                language: "Language",
-                exportAudio: "Export Audio",
-                exportAsWAV: "Export as WAV",
-                aboutApp: "Pocket Metronome",
-                createdBy: "Created by",
-                bugsAndSuggestions: "Bugs & suggestions:",
-                nonProfitProject: "This is a non-profit project, made with ❤️ for musicians.",
-                version: "Version",
-                checkForUpdates: "Check for Updates",
-                close: "Close",
-                tapToSetTempo: "Tap to set tempo",
-                newMetronome: "New metronome",
-                saveCurrentMetronome: "Save current metronome",
-                viewSavedMetronomes: "View saved metronomes"
-            },
-            es: {
-                appTitle: "Metrónomo de Bolsillo",
-                unsaved: "Sin guardar",
-                tempo: "Tempo (BPM)",
-                totalBeats: "Pulsos Totales (0 = ilimitado)",
-                startingBeats: "Pulsos Iniciales (cuenta atrás)",
-                volume: "Volumen",
-                start: "INICIAR",
-                stop: "DETENER",
-                pause: "PAUSAR",
-                resume: "CONTINUAR",
-                readyToStart: "Listo para comenzar",
-                advancedSettings: "Configuración Avanzada",
-                timeSignature: "Compás",
-                preview: "Vista Previa",
-                clickToToggle: "Haz clic en las notas para alternar acentos",
-                metronomeSound: "Sonido del Metrónomo",
-                beep: "Beep (Predeterminado)",
-                click: "Clic",
-                woodblock: "Bloque de Madera",
-                voice: "Voz (muy beta)",
-                beatEffects: "Efectos de Pulso",
-                blinkOnBeat: "Parpadear",
-                vibrateOnBeat: "Vibrar",
-                theme: "Tema",
-                darkMode: "Modo Oscuro",
-                lightMode: "Modo Claro",
-                language: "Idioma",
-                exportAudio: "Exportar Audio",
-                exportAsWAV: "Exportar como WAV",
-                aboutApp: "Metrónomo de Bolsillo",
-                createdBy: "Creado por",
-                bugsAndSuggestions: "Errores y sugerencias:",
-                nonProfitProject: "Este es un proyecto sin fines de lucro, hecho con ❤️ para músicos.",
-                version: "Versión",
-                checkForUpdates: "Buscar Actualizaciones",
-                close: "Cerrar",
-                tapToSetTempo: "Toca para establecer el tempo",
-                newMetronome: "Nuevo metrónomo",
-                saveCurrentMetronome: "Guardar metrónomo actual",
-                viewSavedMetronomes: "Ver metrónomos guardados"
-            },
-            fr: {
-                appTitle: "Métronome de Poche",
-                unsaved: "Non enregistré",
-                tempo: "Tempo (BPM)",
-                totalBeats: "Battements Totaux (0 = illimité)",
-                startingBeats: "Battements Initiaux (compte à rebours)",
-                volume: "Volume",
-                start: "DÉMARRER",
-                stop: "ARRÊTER",
-                pause: "PAUSE",
-                resume: "REPRENDRE",
-                readyToStart: "Prêt à commencer",
-                advancedSettings: "Paramètres Avancés",
-                timeSignature: "Mesure",
-                preview: "Aperçu",
-                clickToToggle: "Cliquez sur les notes pour basculer les accents",
-                metronomeSound: "Son du Métronome",
-                beep: "Bip (Par défaut)",
-                click: "Clic",
-                woodblock: "Bloc de Bois",
-                voice: "Voix (très beta)",
-                beatEffects: "Effets de Battement",
-                blinkOnBeat: "Clignoter",
-                vibrateOnBeat: "Vibrer",
-                theme: "Thème",
-                darkMode: "Mode Sombre",
-                lightMode: "Mode Clair",
-                language: "Langue",
-                exportAudio: "Exporter Audio",
-                exportAsWAV: "Exporter en WAV",
-                aboutApp: "Métronome de Poche",
-                createdBy: "Créé par",
-                bugsAndSuggestions: "Bugs et suggestions:",
-                nonProfitProject: "Ceci est un projet à but non lucratif, fait avec ❤️ pour les musiciens.",
-                version: "Version",
-                checkForUpdates: "Vérifier les Mises à Jour",
-                close: "Fermer",
-                tapToSetTempo: "Appuyez pour définir le tempo",
-                newMetronome: "Nouveau métronome",
-                saveCurrentMetronome: "Enregistrer le métronome actuel",
-                viewSavedMetronomes: "Voir les métronomes enregistrés"
-            },
-            de: {
-                appTitle: "Taschenmetronom",
-                unsaved: "Nicht gespeichert",
-                tempo: "Tempo (BPM)",
-                totalBeats: "Gesamtschläge (0 = unbegrenzt)",
-                startingBeats: "Startschläge (Vorzähler)",
-                volume: "Lautstärke",
-                start: "START",
-                stop: "STOPP",
-                pause: "PAUSE",
-                resume: "FORTSETZEN",
-                readyToStart: "Bereit zum Starten",
-                advancedSettings: "Erweiterte Einstellungen",
-                timeSignature: "Taktart",
-                preview: "Vorschau",
-                clickToToggle: "Klicken Sie auf die Noten, um Akzente umzuschalten",
-                metronomeSound: "Metronomsound",
-                beep: "Piep (Standard)",
-                click: "Klick",
-                woodblock: "Holzblock",
-                voice: "Stimme (sehr beta)",
-                beatEffects: "Schlageffekte",
-                blinkOnBeat: "Blinken",
-                vibrateOnBeat: "Vibrieren",
-                theme: "Design",
-                darkMode: "Dunkler Modus",
-                lightMode: "Heller Modus",
-                language: "Sprache",
-                exportAudio: "Audio Exportieren",
-                exportAsWAV: "Als WAV Exportieren",
-                aboutApp: "Taschenmetronom",
-                createdBy: "Erstellt von",
-                bugsAndSuggestions: "Fehler und Vorschläge:",
-                nonProfitProject: "Dies ist ein gemeinnütziges Projekt, mit ❤️ für Musiker gemacht.",
-                version: "Version",
-                checkForUpdates: "Nach Updates Suchen",
-                close: "Schließen",
-                tapToSetTempo: "Tippen um Tempo festzulegen",
-                newMetronome: "Neues Metronom",
-                saveCurrentMetronome: "Aktuelles Metronom speichern",
-                viewSavedMetronomes: "Gespeicherte Metronome anzeigen"
-            },
-            'pt-BR': {
-                appTitle: "Metrônomo de Bolso",
-                unsaved: "Não salvo",
-                tempo: "Tempo (BPM)",
-                totalBeats: "Batidas Totais (0 = ilimitado)",
-                startingBeats: "Batidas Iniciais (contagem)",
-                volume: "Volume",
-                start: "INICIAR",
-                stop: "PARAR",
-                pause: "PAUSAR",
-                resume: "CONTINUAR",
-                readyToStart: "Pronto para começar",
-                advancedSettings: "Configurações Avançadas",
-                timeSignature: "Fórmula de Compasso",
-                preview: "Prévia",
-                clickToToggle: "Clique nas notas para alternar acentos",
-                metronomeSound: "Som do Metrônomo",
-                beep: "Bipe (Padrão)",
-                click: "Clique",
-                woodblock: "Bloco de Madeira",
-                voice: "Voz (muito beta)",
-                beatEffects: "Efeitos de Batida",
-                blinkOnBeat: "Piscar",
-                vibrateOnBeat: "Vibrar",
-                theme: "Tema",
-                darkMode: "Modo Escuro",
-                lightMode: "Modo Claro",
-                language: "Idioma",
-                exportAudio: "Exportar Áudio",
-                exportAsWAV: "Exportar como WAV",
-                aboutApp: "Metrônomo de Bolso",
-                createdBy: "Criado por",
-                bugsAndSuggestions: "Bugs e sugestões:",
-                nonProfitProject: "Este é um projeto sem fins lucrativos, feito com ❤️ para músicos.",
-                version: "Versão",
-                checkForUpdates: "Verificar Atualizações",
-                close: "Fechar",
-                tapToSetTempo: "Toque para definir o tempo",
-                newMetronome: "Novo metrônomo",
-                saveCurrentMetronome: "Salvar metrônomo atual",
-                viewSavedMetronomes: "Ver metrónomos salvos"
-            },
-            'pt-PT': {
-                appTitle: "Metrónomo de Bolso",
-                unsaved: "Não guardado",
-                tempo: "Tempo (BPM)",
-                totalBeats: "Batimentos Totais (0 = ilimitado)",
-                startingBeats: "Batimentos Iniciais (contagem)",
-                volume: "Volume",
-                start: "INICIAR",
-                stop: "PARAR",
-                pause: "PAUSAR",
-                resume: "CONTINUAR",
-                readyToStart: "Pronto para começar",
-                advancedSettings: "Definições Avançadas",
-                timeSignature: "Compasso",
-                preview: "Pré-visualização",
-                clickToToggle: "Clique nas notas para alternar acentos",
-                metronomeSound: "Som do Metrónomo",
-                beep: "Bip (Predefinido)",
-                click: "Clique",
-                woodblock: "Bloco de Madeira",
-                voice: "Voz (muito beta)",
-                beatEffects: "Efeitos de Batimento",
-                blinkOnBeat: "Piscar",
-                vibrateOnBeat: "Vibrar",
-                theme: "Tema",
-                darkMode: "Modo Escuro",
-                lightMode: "Modo Claro",
-                language: "Idioma",
-                exportAudio: "Exportar Áudio",
-                exportAsWAV: "Exportar como WAV",
-                aboutApp: "Metrónomo de Bolso",
-                createdBy: "Criado por",
-                bugsAndSuggestions: "Bugs e sugestões:",
-                nonProfitProject: "Este é um projecto sem fins lucrativos, feito com ❤️ para músicos.",
-                version: "Versão",
-                checkForUpdates: "Verificar Atualizações",
-                close: "Fechar",
-                tapToSetTempo: "Toque para definir o tempo",
-                newMetronome: "Novo metrónomo",
-                saveCurrentMetronome: "Guardar metrónomo actual",
-                viewSavedMetronomes: "Ver metrónomos guardados"
+        // Translations will be loaded from JSON files
+        const translations = {};
+
+        // Load translation file for a given language
+        async function loadTranslation(lang) {
+            try {
+                const response = await fetch(`/lang/${lang}.json`);
+                if (!response.ok) {
+                    console.warn(`Translation file for ${lang} not found, falling back to English`);
+                    const fallbackResponse = await fetch('/lang/en.json');
+                    return await fallbackResponse.json();
+                }
+                return await response.json();
+            } catch (error) {
+                console.error('Error loading translation:', error);
+                // Return empty object as fallback
+                return {};
             }
-        };
+        }
 
         class Metronome {
             constructor() {
@@ -2103,7 +1868,7 @@
                 localStorage.setItem('metronome-theme', isDark ? 'dark' : 'light');
             }
 
-            initLanguage() {
+            async initLanguage() {
                 // Load saved language preference or default to English
                 const savedLanguage = localStorage.getItem('metronome-language') || 'en';
                 this.currentLanguage = savedLanguage;
@@ -2113,18 +1878,24 @@
                     this.languageSelect.value = savedLanguage;
                 }
 
-                // Apply language
-                this.applyLanguage();
+                // Load and apply language
+                await this.loadAndApplyLanguage(savedLanguage);
             }
 
-            setLanguage(lang) {
+            async setLanguage(lang) {
                 this.currentLanguage = lang;
                 localStorage.setItem('metronome-language', lang);
-                this.applyLanguage();
+                await this.loadAndApplyLanguage(lang);
 
                 // Update theme button text in new language
                 const isDark = document.body.classList.contains('dark-mode');
                 this.updateThemeButton(isDark);
+            }
+
+            async loadAndApplyLanguage(lang) {
+                // Load translation from JSON file
+                translations[lang] = await loadTranslation(lang);
+                this.applyLanguage();
             }
 
             applyLanguage() {
@@ -3236,7 +3007,6 @@
                                         '<p><strong>Limitations:</strong></p>' +
                                         '<ul>' +
                                         '<li>Only works on mobile devices (not desktop)</li>' +
-                                        '<li>Requires HTTPS ✓</li>' +
                                         '<li>Not supported on iOS/Safari</li>' +
                                         '<li>Requires haptics enabled in Android settings</li>' +
                                         '<li>May be blocked in Do Not Disturb mode</li>' +
@@ -3262,7 +3032,6 @@
                                 '<ul>' +
                                 '<li>Mobile device with vibration hardware</li>' +
                                 '<li>Chrome/Firefox/Edge (not Safari)</li>' +
-                                '<li>HTTPS connection</li>' +
                                 '</ul>'
                             );
                         }
@@ -3442,7 +3211,7 @@
                 if (this.vibrateOnBeat) {
                     if ('vibrate' in navigator) {
                         try {
-                            const result = navigator.vibrate(50); // Vibrate for 50ms
+                            const result = navigator.vibrate(75); // Vibrate for 75ms
                             if (!result) {
                                 console.warn('Vibration call returned false');
                             }
