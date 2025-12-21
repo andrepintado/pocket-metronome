@@ -3128,12 +3128,13 @@
                     if (e.target.checked) {
                         if ('vibrate' in navigator) {
                             try {
-                                const result = navigator.vibrate(200); // Test vibration
+                                // Use a pattern: vibrate 300ms, pause 100ms, vibrate 300ms
+                                const result = navigator.vibrate([300, 100, 300]);
                                 console.log('Vibration test result:', result);
                                 if (result === false) {
-                                    alert('❌ Vibration blocked by browser or device settings');
+                                    alert('❌ Vibration blocked by browser or device settings.\n\nCheck:\n- Chrome Settings > Site Settings > pocketmetronome.com\n- Phone is not in Do Not Disturb mode\n- Vibration is enabled in system settings');
                                 } else {
-                                    alert('✓ Vibration test sent (you should have felt a vibration)');
+                                    alert('✓ Vibration API call succeeded.\n\nIf you didn\'t feel a vibration, check:\n- Chrome://flags (search "vibrate")\n- Site permissions for pocketmetronome.com\n- System vibration settings\n- Do Not Disturb / Silent mode');
                                 }
                             } catch (err) {
                                 console.error('Vibration test failed:', err);
