@@ -1232,6 +1232,17 @@
                 font-size: 0.85em;
             }
         }
+
+        /* Blink on beat effect */
+        @keyframes blink-flash {
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+
+        body.blink-active {
+            animation: blink-flash 0.15s ease-in-out;
+        }
     </style>
 </head>
 <body>
@@ -1363,6 +1374,20 @@
         </div>
 
         <div class="settings-group">
+            <h3 data-i18n="beatEffects">Beat Effects</h3>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                    <input type="checkbox" id="blinkOnBeat" style="width: 20px; height: 20px; cursor: pointer;">
+                    <span data-i18n="blinkOnBeat">Blink on Beat</span>
+                </label>
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                    <input type="checkbox" id="vibrateOnBeat" style="width: 20px; height: 20px; cursor: pointer;">
+                    <span data-i18n="vibrateOnBeat">Vibrate on Beat</span>
+                </label>
+            </div>
+        </div>
+
+        <div class="settings-group">
             <h3>Theme</h3>
             <button id="themeToggleSettings" class="theme-toggle-btn">
                 <span id="themeIcon">🌙</span>
@@ -1480,6 +1505,9 @@
                 click: "Click",
                 woodblock: "Woodblock",
                 voice: "Voice (very beta)",
+                beatEffects: "Beat Effects",
+                blinkOnBeat: "Blink on Beat",
+                vibrateOnBeat: "Vibrate on Beat",
                 theme: "Theme",
                 darkMode: "Dark Mode",
                 lightMode: "Light Mode",
@@ -1519,6 +1547,9 @@
                 click: "Clic",
                 woodblock: "Bloque de Madera",
                 voice: "Voz (muy beta)",
+                beatEffects: "Efectos de Pulso",
+                blinkOnBeat: "Parpadear con el Pulso",
+                vibrateOnBeat: "Vibrar con el Pulso",
                 theme: "Tema",
                 darkMode: "Modo Oscuro",
                 lightMode: "Modo Claro",
@@ -1558,6 +1589,9 @@
                 click: "Clic",
                 woodblock: "Bloc de Bois",
                 voice: "Voix (très beta)",
+                beatEffects: "Effets de Battement",
+                blinkOnBeat: "Clignoter au Battement",
+                vibrateOnBeat: "Vibrer au Battement",
                 theme: "Thème",
                 darkMode: "Mode Sombre",
                 lightMode: "Mode Clair",
@@ -1597,6 +1631,9 @@
                 click: "Klick",
                 woodblock: "Holzblock",
                 voice: "Stimme (sehr beta)",
+                beatEffects: "Schlageffekte",
+                blinkOnBeat: "Blinken zum Schlag",
+                vibrateOnBeat: "Vibrieren zum Schlag",
                 theme: "Design",
                 darkMode: "Dunkler Modus",
                 lightMode: "Heller Modus",
@@ -1636,6 +1673,9 @@
                 click: "Clique",
                 woodblock: "Bloco de Madeira",
                 voice: "Voz (muito beta)",
+                beatEffects: "Efeitos de Batida",
+                blinkOnBeat: "Piscar na Batida",
+                vibrateOnBeat: "Vibrar na Batida",
                 theme: "Tema",
                 darkMode: "Modo Escuro",
                 lightMode: "Modo Claro",
@@ -1675,6 +1715,9 @@
                 click: "Clique",
                 woodblock: "Bloco de Madeira",
                 voice: "Voz (muito beta)",
+                beatEffects: "Efeitos de Batimento",
+                blinkOnBeat: "Piscar no Batimento",
+                vibrateOnBeat: "Vibrar no Batimento",
                 theme: "Tema",
                 darkMode: "Modo Escuro",
                 lightMode: "Modo Claro",
@@ -1721,6 +1764,8 @@
                 this.timeSigDenominator = 4;
                 this.accentPattern = [true, false, false, false]; // First beat accented by default
                 this.soundType = 'beep';
+                this.blinkOnBeat = false;
+                this.vibrateOnBeat = false;
 
                 // Preset management
                 this.presets = [];
@@ -1763,6 +1808,8 @@
                 this.timeSigNumeratorInput = document.getElementById('timeSigNumerator');
                 this.timeSigDenominatorInput = document.getElementById('timeSigDenominator');
                 this.soundTypeSelect = document.getElementById('soundType');
+                this.blinkOnBeatCheckbox = document.getElementById('blinkOnBeat');
+                this.vibrateOnBeatCheckbox = document.getElementById('vibrateOnBeat');
                 this.beatPreview = document.getElementById('beatPreview');
                 this.exportBtn = document.getElementById('exportBtn');
 
@@ -1926,6 +1973,8 @@
                         this.timeSigDenominator = parsed.timeSigDenominator || 4;
                         this.accentPattern = parsed.accentPattern || [true, false, false, false];
                         this.soundType = parsed.soundType || 'beep';
+                        this.blinkOnBeat = parsed.blinkOnBeat || false;
+                        this.vibrateOnBeat = parsed.vibrateOnBeat || false;
 
                         // Update UI elements
                         this.updateTempoDisplay();
@@ -1936,6 +1985,8 @@
                         this.timeSigNumeratorInput.value = this.timeSigNumerator;
                         this.timeSigDenominatorInput.value = this.timeSigDenominator;
                         this.soundTypeSelect.value = this.soundType;
+                        this.blinkOnBeatCheckbox.checked = this.blinkOnBeat;
+                        this.vibrateOnBeatCheckbox.checked = this.vibrateOnBeat;
                     } catch (e) {
                         console.error('Failed to load settings:', e);
                     }
@@ -1952,7 +2003,9 @@
                     timeSigNumerator: this.timeSigNumerator,
                     timeSigDenominator: this.timeSigDenominator,
                     accentPattern: this.accentPattern,
-                    soundType: this.soundType
+                    soundType: this.soundType,
+                    blinkOnBeat: this.blinkOnBeat,
+                    vibrateOnBeat: this.vibrateOnBeat
                 };
                 localStorage.setItem('metronome-settings', JSON.stringify(settings));
             }
@@ -2126,7 +2179,9 @@
                     timeSigNumerator: this.timeSigNumerator,
                     timeSigDenominator: this.timeSigDenominator,
                     accentPattern: [...this.accentPattern],
-                    soundType: this.soundType
+                    soundType: this.soundType,
+                    blinkOnBeat: this.blinkOnBeat,
+                    vibrateOnBeat: this.vibrateOnBeat
                 };
             }
 
@@ -2225,6 +2280,8 @@
                 this.timeSigDenominator = preset.timeSigDenominator;
                 this.accentPattern = [...preset.accentPattern];
                 this.soundType = preset.soundType;
+                this.blinkOnBeat = preset.blinkOnBeat || false;
+                this.vibrateOnBeat = preset.vibrateOnBeat || false;
 
                 // Update UI
                 this.updateTempoDisplay();
@@ -2235,6 +2292,8 @@
                 this.timeSigNumeratorInput.value = this.timeSigNumerator;
                 this.timeSigDenominatorInput.value = this.timeSigDenominator;
                 this.soundTypeSelect.value = this.soundType;
+                this.blinkOnBeatCheckbox.checked = this.blinkOnBeat;
+                this.vibrateOnBeatCheckbox.checked = this.vibrateOnBeat;
 
                 this.updateAccentGrid();
 
@@ -3053,6 +3112,19 @@
                     this.markAsModified();
                 });
 
+                // Beat effects checkboxes
+                this.blinkOnBeatCheckbox.addEventListener('change', (e) => {
+                    this.blinkOnBeat = e.target.checked;
+                    this.saveSettings();
+                    this.markAsModified();
+                });
+
+                this.vibrateOnBeatCheckbox.addEventListener('change', (e) => {
+                    this.vibrateOnBeat = e.target.checked;
+                    this.saveSettings();
+                    this.markAsModified();
+                });
+
                 // Export button
                 this.exportBtn.addEventListener('click', () => this.exportToWAV());
             }
@@ -3233,6 +3305,17 @@
                     this.beatIndicator.textContent = beatText;
                     this.beatIndicator.classList.add('active');
                     setTimeout(() => this.beatIndicator.classList.remove('active'), 100);
+
+                    // Blink effect
+                    if (this.blinkOnBeat) {
+                        document.body.classList.add('blink-active');
+                        setTimeout(() => document.body.classList.remove('blink-active'), 150);
+                    }
+
+                    // Vibrate effect
+                    if (this.vibrateOnBeat && 'vibrate' in navigator) {
+                        navigator.vibrate(50); // Vibrate for 50ms
+                    }
                 }, (time - this.audioContext.currentTime) * 1000);
             }
 
