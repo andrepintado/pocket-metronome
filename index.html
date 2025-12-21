@@ -3215,7 +3215,7 @@
                 if (this.vibrateOnBeat) {
                     if ('vibrate' in navigator) {
                         try {
-                            const result = navigator.vibrate(75); // Vibrate for 75ms
+                            const result = navigator.vibrate(100); // Vibrate for 100ms
                             if (!result) {
                                 console.warn('Vibration call returned false');
                             }
