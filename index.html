@@ -887,6 +887,190 @@
             border-color: var(--accent-hover);
         }
 
+        /* Fullscreen Mode */
+        .fullscreen-mode {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--background);
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .fullscreen-mode.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .fullscreen-exit-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: transparent;
+            border: 2px solid var(--text-secondary);
+            color: var(--text-secondary);
+            font-size: 2em;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .fullscreen-exit-btn:hover {
+            background: var(--text-secondary);
+            color: var(--background);
+            transform: scale(1.1);
+        }
+
+        .fullscreen-preset-name {
+            position: absolute;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.2em;
+            color: var(--text-secondary);
+            opacity: 0.8;
+        }
+
+        .fullscreen-bpm {
+            font-size: 12em;
+            font-weight: bold;
+            color: var(--accent-color);
+            line-height: 1;
+            margin-bottom: 20px;
+        }
+
+        .fullscreen-beat-indicator {
+            font-size: 1.5em;
+            color: var(--text-secondary);
+            margin-bottom: 60px;
+        }
+
+        .fullscreen-controls {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .fullscreen-control-btn {
+            background: var(--container-bg);
+            border: 2px solid var(--accent-color);
+            color: var(--accent-color);
+            font-size: 2em;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .fullscreen-control-btn:hover {
+            background: var(--accent-color);
+            color: var(--container-bg);
+            transform: scale(1.1);
+        }
+
+        .fullscreen-play-btn {
+            width: 90px;
+            height: 90px;
+            font-size: 2.5em;
+            background: var(--accent-color);
+            color: var(--container-bg);
+        }
+
+        .fullscreen-play-btn:hover {
+            background: var(--accent-hover);
+            border-color: var(--accent-hover);
+        }
+
+        .fullscreen-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5em;
+            cursor: pointer;
+            padding: 10px;
+            transition: all 0.3s ease;
+            opacity: 0.6;
+        }
+
+        .fullscreen-btn:hover {
+            opacity: 1;
+            color: var(--accent-color);
+            transform: scale(1.1);
+        }
+
+        /* Fullscreen Mode - Landscape Orientation */
+        @media screen and (orientation: landscape) and (max-height: 600px) {
+            .fullscreen-bpm {
+                font-size: 8em;
+            }
+
+            .fullscreen-preset-name {
+                top: 15px;
+                font-size: 1em;
+            }
+
+            .fullscreen-exit-btn {
+                top: 10px;
+                left: 10px;
+                width: 40px;
+                height: 40px;
+                font-size: 1.5em;
+            }
+
+            .fullscreen-beat-indicator {
+                font-size: 1.2em;
+                margin-bottom: 30px;
+            }
+
+            .fullscreen-control-btn {
+                width: 55px;
+                height: 55px;
+                font-size: 1.5em;
+            }
+
+            .fullscreen-play-btn {
+                width: 70px;
+                height: 70px;
+                font-size: 2em;
+            }
+        }
+
+        /* Fullscreen Mode - Small Screens */
+        @media screen and (max-width: 500px) {
+            .fullscreen-bpm {
+                font-size: 8em;
+            }
+
+            .fullscreen-control-btn {
+                width: 60px;
+                height: 60px;
+                font-size: 1.8em;
+            }
+
+            .fullscreen-play-btn {
+                width: 75px;
+                height: 75px;
+                font-size: 2.2em;
+            }
+        }
+
         .settings-modal h2 {
             color: var(--text-primary);
             margin-bottom: 25px;
@@ -1425,6 +1609,27 @@
         <button class="vibration-modal-close" id="vibrationModalClose">Got it</button>
     </div>
 
+    <!-- Fullscreen Mode -->
+    <div class="fullscreen-mode" id="fullscreenMode">
+        <button class="fullscreen-exit-btn" id="fullscreenExitBtn" aria-label="Exit fullscreen" title="Exit fullscreen">
+            ✕
+        </button>
+        <div class="fullscreen-preset-name" id="fullscreenPresetName">Unsaved</div>
+        <div class="fullscreen-bpm" id="fullscreenBpm">120</div>
+        <div class="fullscreen-beat-indicator" id="fullscreenBeatIndicator">Ready to start</div>
+        <div class="fullscreen-controls">
+            <button class="fullscreen-control-btn" id="fullscreenRestartBtn" aria-label="Restart" title="Restart">
+                ↻
+            </button>
+            <button class="fullscreen-control-btn fullscreen-play-btn" id="fullscreenPlayPauseBtn" aria-label="Play" title="Play">
+                ▶
+            </button>
+            <button class="fullscreen-control-btn" id="fullscreenNextBtn" aria-label="Next preset" title="Next preset">
+                ⏭
+            </button>
+        </div>
+    </div>
+
     <div class="presets-modal" id="presetsModal">
         <button class="settings-close" id="presetsClose">×</button>
         <h2>Saved Metronomes</h2>
@@ -1498,6 +1703,9 @@
     </div>
 
     <div class="container">
+        <button class="fullscreen-btn" id="fullscreenBtn" aria-label="Fullscreen mode" title="Fullscreen mode">
+            ⛶
+        </button>
         <button class="new-metronome-btn" id="newMetronomeBtn" aria-label="New metronome" title="New metronome">
             ➕
         </button>
@@ -1701,6 +1909,17 @@
                 this.themeIcon = document.getElementById('themeIcon');
                 this.themeText = document.getElementById('themeText');
                 this.languageSelect = document.getElementById('languageSelect');
+
+                // Fullscreen elements
+                this.fullscreenBtn = document.getElementById('fullscreenBtn');
+                this.fullscreenMode = document.getElementById('fullscreenMode');
+                this.fullscreenExitBtn = document.getElementById('fullscreenExitBtn');
+                this.fullscreenPresetName = document.getElementById('fullscreenPresetName');
+                this.fullscreenBpm = document.getElementById('fullscreenBpm');
+                this.fullscreenBeatIndicator = document.getElementById('fullscreenBeatIndicator');
+                this.fullscreenRestartBtn = document.getElementById('fullscreenRestartBtn');
+                this.fullscreenPlayPauseBtn = document.getElementById('fullscreenPlayPauseBtn');
+                this.fullscreenNextBtn = document.getElementById('fullscreenNextBtn');
             }
 
             async initAudio() {
@@ -2258,6 +2477,8 @@
             }
 
             updatePresetNameDisplay() {
+                const presetName = this.currentPresetName || 'Unsaved';
+
                 if (this.currentPresetName) {
                     this.presetNameDisplay.textContent = this.currentPresetName;
                     if (this.isModified) {
@@ -2268,6 +2489,11 @@
                 } else {
                     this.presetNameDisplay.textContent = 'Unsaved';
                     this.presetNameDisplay.classList.remove('modified');
+                }
+
+                // Update fullscreen preset name
+                if (this.fullscreenPresetName) {
+                    this.fullscreenPresetName.textContent = presetName;
                 }
             }
 
@@ -3044,6 +3270,13 @@
 
                 // Export button
                 this.exportBtn.addEventListener('click', () => this.exportToWAV());
+
+                // Fullscreen mode
+                this.fullscreenBtn.addEventListener('click', () => this.enterFullscreen());
+                this.fullscreenExitBtn.addEventListener('click', () => this.exitFullscreen());
+                this.fullscreenRestartBtn.addEventListener('click', () => this.stop());
+                this.fullscreenPlayPauseBtn.addEventListener('click', () => this.toggleStartPause());
+                this.fullscreenNextBtn.addEventListener('click', () => this.nextPreset());
             }
 
             setupLongPress(button, callback) {
@@ -3157,6 +3390,9 @@
 
             updateTempoDisplay() {
                 this.tempoDisplay.value = this.tempo;
+                if (this.fullscreenBpm) {
+                    this.fullscreenBpm.textContent = this.tempo;
+                }
             }
 
             playClick(time, isCountIn = false, beatNumber = 0) {
@@ -3239,6 +3475,11 @@
                     this.beatIndicator.classList.add('active');
                     setTimeout(() => this.beatIndicator.classList.remove('active'), 100);
 
+                    // Update fullscreen beat indicator
+                    if (this.fullscreenBeatIndicator) {
+                        this.fullscreenBeatIndicator.textContent = beatText;
+                    }
+
                     // Blink effect
                     if (this.blinkOnBeat) {
                         document.body.classList.add('blink-active');
@@ -3279,6 +3520,13 @@
                 this.startPauseBtn.classList.remove('paused');
                 this.stopBtn.disabled = false;
 
+                // Update fullscreen play/pause button
+                if (this.fullscreenPlayPauseBtn) {
+                    this.fullscreenPlayPauseBtn.textContent = '❚❚';
+                    this.fullscreenPlayPauseBtn.setAttribute('aria-label', 'Pause');
+                    this.fullscreenPlayPauseBtn.setAttribute('title', 'Pause');
+                }
+
                 this.schedulerTimer = setInterval(() => this.scheduler(), this.lookahead);
             }
 
@@ -3302,6 +3550,16 @@
                         : `Paused at beat: ${lastPlayedBeat + 1}`;
 
                 this.beatIndicator.textContent = beatText;
+                if (this.fullscreenBeatIndicator) {
+                    this.fullscreenBeatIndicator.textContent = beatText;
+                }
+
+                // Update fullscreen play/pause button
+                if (this.fullscreenPlayPauseBtn) {
+                    this.fullscreenPlayPauseBtn.textContent = '▶';
+                    this.fullscreenPlayPauseBtn.setAttribute('aria-label', 'Resume');
+                    this.fullscreenPlayPauseBtn.setAttribute('title', 'Resume');
+                }
             }
 
             resume() {
@@ -3312,6 +3570,13 @@
 
                 this.startPauseBtn.textContent = translations[this.currentLanguage].pause;
                 this.startPauseBtn.classList.remove('paused');
+
+                // Update fullscreen play/pause button
+                if (this.fullscreenPlayPauseBtn) {
+                    this.fullscreenPlayPauseBtn.textContent = '❚❚';
+                    this.fullscreenPlayPauseBtn.setAttribute('aria-label', 'Pause');
+                    this.fullscreenPlayPauseBtn.setAttribute('title', 'Pause');
+                }
 
                 this.schedulerTimer = setInterval(() => this.scheduler(), this.lookahead);
             }
@@ -3328,6 +3593,16 @@
                 this.stopBtn.disabled = true;
                 this.beatIndicator.textContent = translations[this.currentLanguage].readyToStart;
                 this.beatIndicator.classList.remove('active');
+
+                // Update fullscreen display
+                if (this.fullscreenBeatIndicator) {
+                    this.fullscreenBeatIndicator.textContent = translations[this.currentLanguage].readyToStart;
+                }
+                if (this.fullscreenPlayPauseBtn) {
+                    this.fullscreenPlayPauseBtn.textContent = '▶';
+                    this.fullscreenPlayPauseBtn.setAttribute('aria-label', 'Play');
+                    this.fullscreenPlayPauseBtn.setAttribute('title', 'Play');
+                }
             }
 
             toggleStartPause() {
@@ -3338,6 +3613,59 @@
                 } else {
                     this.pause();
                 }
+            }
+
+            enterFullscreen() {
+                this.fullscreenMode.classList.add('open');
+                this.updateFullscreenDisplay();
+            }
+
+            exitFullscreen() {
+                this.fullscreenMode.classList.remove('open');
+            }
+
+            updateFullscreenDisplay() {
+                // Update preset name
+                this.fullscreenPresetName.textContent = this.currentPresetName || translations[this.currentLanguage].unsaved;
+
+                // Update BPM
+                this.fullscreenBpm.textContent = this.tempo;
+
+                // Update beat indicator
+                this.fullscreenBeatIndicator.textContent = this.beatIndicator.textContent;
+
+                // Update play/pause button
+                if (this.isPlaying && !this.isPaused) {
+                    this.fullscreenPlayPauseBtn.textContent = '❚❚';
+                    this.fullscreenPlayPauseBtn.setAttribute('aria-label', 'Pause');
+                    this.fullscreenPlayPauseBtn.setAttribute('title', 'Pause');
+                } else if (this.isPaused) {
+                    this.fullscreenPlayPauseBtn.textContent = '▶';
+                    this.fullscreenPlayPauseBtn.setAttribute('aria-label', 'Resume');
+                    this.fullscreenPlayPauseBtn.setAttribute('title', 'Resume');
+                } else {
+                    this.fullscreenPlayPauseBtn.textContent = '▶';
+                    this.fullscreenPlayPauseBtn.setAttribute('aria-label', 'Play');
+                    this.fullscreenPlayPauseBtn.setAttribute('title', 'Play');
+                }
+            }
+
+            nextPreset() {
+                const presets = this.loadPresets();
+                if (presets.length === 0) return;
+
+                // Find current preset index
+                let currentIndex = -1;
+                if (this.currentPresetId) {
+                    currentIndex = presets.findIndex(p => p.id === this.currentPresetId);
+                }
+
+                // Go to next preset (wrap around to first if at end)
+                const nextIndex = (currentIndex + 1) % presets.length;
+                const nextPreset = presets[nextIndex];
+
+                this.loadPreset(nextPreset.id);
+                this.updateFullscreenDisplay();
             }
         }
 
