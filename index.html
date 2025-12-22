@@ -1626,6 +1626,9 @@
             <button class="fullscreen-control-btn" id="fullscreenRestartBtn" aria-label="Restart" title="Restart">
                 ↻
             </button>
+            <button class="fullscreen-control-btn" id="fullscreenPrevBtn" aria-label="Previous preset" title="Previous preset">
+                ⏮
+            </button>
             <button class="fullscreen-control-btn fullscreen-play-btn" id="fullscreenPlayPauseBtn" aria-label="Play" title="Play">
                 ▶
             </button>
@@ -1923,6 +1926,7 @@
                 this.fullscreenBpm = document.getElementById('fullscreenBpm');
                 this.fullscreenBeatIndicator = document.getElementById('fullscreenBeatIndicator');
                 this.fullscreenRestartBtn = document.getElementById('fullscreenRestartBtn');
+                this.fullscreenPrevBtn = document.getElementById('fullscreenPrevBtn');
                 this.fullscreenPlayPauseBtn = document.getElementById('fullscreenPlayPauseBtn');
                 this.fullscreenNextBtn = document.getElementById('fullscreenNextBtn');
             }
@@ -3280,6 +3284,7 @@
                 this.fullscreenBtn.addEventListener('click', () => this.enterFullscreen());
                 this.fullscreenExitBtn.addEventListener('click', () => this.exitFullscreen());
                 this.fullscreenRestartBtn.addEventListener('click', () => this.stop());
+                this.fullscreenPrevBtn.addEventListener('click', () => this.previousPreset());
                 this.fullscreenPlayPauseBtn.addEventListener('click', () => this.toggleStartPause());
                 this.fullscreenNextBtn.addEventListener('click', () => this.nextPreset());
             }
@@ -3656,20 +3661,43 @@
             }
 
             nextPreset() {
-                const presets = this.loadPresets();
-                if (presets.length === 0) return;
+                this.loadPresets(); // Refresh presets from storage
+                if (this.presets.length === 0) return;
 
                 // Find current preset index
                 let currentIndex = -1;
                 if (this.currentPresetId) {
-                    currentIndex = presets.findIndex(p => p.id === this.currentPresetId);
+                    currentIndex = this.presets.findIndex(p => p.id === this.currentPresetId);
                 }
 
                 // Go to next preset (wrap around to first if at end)
-                const nextIndex = (currentIndex + 1) % presets.length;
-                const nextPreset = presets[nextIndex];
+                const nextIndex = (currentIndex + 1) % this.presets.length;
+                const nextPreset = this.presets[nextIndex];
 
                 this.loadPreset(nextPreset.id);
+                this.updateFullscreenDisplay();
+            }
+
+            previousPreset() {
+                this.loadPresets(); // Refresh presets from storage
+                if (this.presets.length === 0) return;
+
+                // Find current preset index
+                let currentIndex = -1;
+                if (this.currentPresetId) {
+                    currentIndex = this.presets.findIndex(p => p.id === this.currentPresetId);
+                }
+
+                // Go to previous preset (wrap around to last if at beginning)
+                let prevIndex;
+                if (currentIndex <= 0) {
+                    prevIndex = this.presets.length - 1;
+                } else {
+                    prevIndex = currentIndex - 1;
+                }
+                const prevPreset = this.presets[prevIndex];
+
+                this.loadPreset(prevPreset.id);
                 this.updateFullscreenDisplay();
             }
         }
