@@ -954,6 +954,14 @@
             margin-bottom: 20px;
         }
 
+        .fullscreen-time-signature {
+            font-size: 2em;
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+
         .fullscreen-beat-indicator {
             font-size: 1.5em;
             color: var(--text-secondary);
@@ -1039,6 +1047,11 @@
                 font-size: 1.5em;
             }
 
+            .fullscreen-time-signature {
+                font-size: 1.5em;
+                margin-bottom: 10px;
+            }
+
             .fullscreen-beat-indicator {
                 font-size: 1.2em;
                 margin-bottom: 30px;
@@ -1061,6 +1074,10 @@
         @media screen and (max-width: 500px) {
             .fullscreen-bpm {
                 font-size: 8em;
+            }
+
+            .fullscreen-time-signature {
+                font-size: 1.6em;
             }
 
             .fullscreen-control-btn {
@@ -1621,6 +1638,7 @@
         </button>
         <div class="fullscreen-preset-name" id="fullscreenPresetName">Unsaved</div>
         <div class="fullscreen-bpm" id="fullscreenBpm">120</div>
+        <div class="fullscreen-time-signature" id="fullscreenTimeSignature">4/4</div>
         <div class="fullscreen-beat-indicator" id="fullscreenBeatIndicator">Ready to start</div>
         <div class="fullscreen-controls">
             <button class="fullscreen-control-btn" id="fullscreenRestartBtn" aria-label="Restart" title="Restart">
@@ -1924,6 +1942,7 @@
                 this.fullscreenExitBtn = document.getElementById('fullscreenExitBtn');
                 this.fullscreenPresetName = document.getElementById('fullscreenPresetName');
                 this.fullscreenBpm = document.getElementById('fullscreenBpm');
+                this.fullscreenTimeSignature = document.getElementById('fullscreenTimeSignature');
                 this.fullscreenBeatIndicator = document.getElementById('fullscreenBeatIndicator');
                 this.fullscreenRestartBtn = document.getElementById('fullscreenRestartBtn');
                 this.fullscreenPrevBtn = document.getElementById('fullscreenPrevBtn');
@@ -3181,6 +3200,10 @@
                         this.updateAccentGrid();
                         this.saveSettings();
                         this.markAsModified();
+                        // Update fullscreen time signature
+                        if (this.fullscreenTimeSignature) {
+                            this.fullscreenTimeSignature.textContent = `${this.timeSigNumerator}/${this.timeSigDenominator}`;
+                        }
                     } else {
                         e.target.value = this.timeSigNumerator;
                     }
@@ -3193,6 +3216,10 @@
                         this.updateBeatPreview();
                         this.saveSettings();
                         this.markAsModified();
+                        // Update fullscreen time signature
+                        if (this.fullscreenTimeSignature) {
+                            this.fullscreenTimeSignature.textContent = `${this.timeSigNumerator}/${this.timeSigDenominator}`;
+                        }
                     } else {
                         e.target.value = this.timeSigDenominator;
                     }
@@ -3640,6 +3667,9 @@
 
                 // Update BPM
                 this.fullscreenBpm.textContent = this.tempo;
+
+                // Update time signature
+                this.fullscreenTimeSignature.textContent = `${this.timeSigNumerator}/${this.timeSigDenominator}`;
 
                 // Update beat indicator
                 this.fullscreenBeatIndicator.textContent = this.beatIndicator.textContent;
